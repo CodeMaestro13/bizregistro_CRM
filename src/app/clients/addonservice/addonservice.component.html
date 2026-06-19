@@ -1,0 +1,145 @@
+<p>addonservice works!</p>
+<div class="ed-overlay" *ngIf="visible">
+    <div class="ed-modal">
+        <header class="ed-header">
+            <h3 style="margin-bottom:0px !important;">Add New Services For {{data?.name}}</h3>
+            <button mat-icon-button class="bg-danger-subtle" (click)="onClose()" aria-label="close">
+                <mat-icon>close</mat-icon>
+            </button>
+        </header>         
+        <ng-container>
+            <form class="ed-form" [formGroup]="form">
+                <div class="col-md-12 row" style="margin-top: 6px;display: flex;justify-content: space-evenly;">
+                    <div class="col-md-12 mb-3">
+                       <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Services</mat-label>
+                            <mat-select formControlName="services" multiple>
+                                <mat-option *ngFor="let s of serviceList" [value]="s.servicesTblId">{{ s.servicesName }}</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="form.get('services')?.hasError('required')">Select at least one service</mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Previous Full Amount</mat-label>
+                            <input matInput formControlName="previousFullAmt" type="number" />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Previous Paid Amount</mat-label>
+                            <input matInput formControlName="previousPaidAmt" type="number" />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Previous Remaining Amount</mat-label>
+                            <input matInput formControlName="previousRemainingAmt" type="number" />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Add-On Amount</mat-label>
+                            <input matInput formControlName="addonFullAmt" type="number" />
+                            <mat-error *ngIf="form.get('addonFullAmt')?.hasError('required')">Required</mat-error>
+                            <mat-error *ngIf="form.get('addonFullAmt')?.hasError('min')">Minimum amount is 1</mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Paid Amount</mat-label>
+                            <input matInput formControlName="newPaidAmt" type="number" />
+                            <mat-error *ngIf="form.get('newPaidAmt')?.hasError('required')">Required</mat-error>
+                            <mat-error *ngIf="form.get('newPaidAmt')?.hasError('min')">Minimum amount is 0</mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Remaining Amount</mat-label>
+                            <input matInput formControlName="newRemainingAmt" type="number" />
+                        </mat-form-field>
+                    </div>
+                    <p class="fw-semibold main-color text-center mt-0">Total Amount Calculation</p>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Full Amount</mat-label>
+                            <input matInput formControlName="finalFullAmt" type="number" />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Paid Amount</mat-label>
+                            <input matInput formControlName="finalPaidAmt" type="number" />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Remaining Amount</mat-label>
+                            <input matInput formControlName="finalRemainingAmt" type="number" />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Payment Mode</mat-label>
+                            <mat-select formControlName="paymentMode">
+                                <mat-option value="cash">Cash</mat-option>
+                                <mat-option value="upi">UPI</mat-option>
+                                <mat-option value="card">Card</mat-option>
+                                <mat-option value="bank_transfer">Bank Transfer</mat-option>
+                                <mat-option value="cheque">Cheque</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="form.get('paymentMode')?.hasError('required')">Payment Mode is required</mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Transaction ID</mat-label>
+                            <input matInput formControlName="transactionId" />
+                            <mat-error *ngIf="form.get('transactionId')?.hasError('required')">Transaction ID is required</mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <footer class="ed-footer">
+                    <button mat-stroked-button type="button" (click)="onClose()">Cancel</button>
+                    <button mat-flat-button color="primary" type="button" (click)="save()">Save</button>
+                </footer>
+            </form>
+        </ng-container>
+        <!--
+        <div class="reports-table table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="fw-semibold main-color">Receipt No.</th>
+                        <th class="fw-semibold gray-color">Amount</th>
+                        <th class="fw-semibold gray-color">Transactions Id</th>
+                        <th class="fw-semibold gray-color">Added Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of data?.paymentDetails?.data || []">
+                        <td class="black-color fw-semibold">biz-{{ item.id }}</td>
+                        <td class="gray-color fw-semibold">
+                            <div class="d-flex align-items-center justify-content-center">
+                                {{ item.payment_mode | titlecase }} <br />
+                                {{ item.payment_amount }} 
+                            </div>
+                        </td>
+                        <td class="gray-color fw-semibold">
+                            {{ item.transaction_id }} <br />
+                            <span class="muted-color fw-normal"> ({{ item.status == 1 ? 'Completed' : 'Pending' }})</span>
+                        </td>
+                        <td><span class="fw-semibold">{{ item.created_at }}</span></td>
+                    </tr>
+                    <tr *ngIf="data?.paymentDetails?.data && (data.paymentDetails?.ttl?.totalRemaining == 0)" style="border-top: 2px solid #ccc;">
+                        <td colspan="" class="text-center">Received</td>
+                        <td colspan="" class="text-center gray-color fw-semibold">{{data.paymentDetails?.ttl?.totalPaid}}</td>
+                        <td colspan="" class="text-center">Remaining</td>
+                        <td colspan="" class="text-center gray-color fw-semibold">{{data.paymentDetails?.ttl?.totalRemaining}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        -->
+    </div> 
+</div>

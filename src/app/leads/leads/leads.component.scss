@@ -1,0 +1,47 @@
+@import '../../themecomponent/apps/file-manager/my-drive/my-drive.component';
+.badge {
+    display: inline-block;
+    margin: {
+        right: 15px;
+        bottom: 15px;
+    };
+}
+.button-status{
+    width:max-content;padding: 5px 10px 5px !important;
+}
+.pills {
+    position: absolute;
+    margin: -17px -19px;
+    border-radius: 10px;
+    padding: 5px 10px;
+}
+
+.border-top {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 15px;
+}
+.ml-0{
+    margin-left:0 !important;
+}
+
+.mat-mdc-mini-fab {
+    width: 35px !important;
+    height: 35px !important;
+}
+
+.mt-2{
+    margin-top: .5em;
+}
+
+
+.break-words{
+    // word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: break-spaces !important;
+    width: 410px !important;
+}
+
+.flaticon-whatsapp{
+    color: white;
+    font-size: large;
+}

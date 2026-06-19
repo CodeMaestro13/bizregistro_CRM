@@ -1,0 +1,155 @@
+<!-- <p>filler works!</p> -->
+<div class="breadcrumb-card mb-15 mt-25 d-md-flex align-items-center justify-content-space-between">
+    <h5 class="mb-0">Filler Activities</h5>
+    <ol class="breadcrumb mb-0 ps-0">
+        <li class="breadcrumb-item">
+            <a routerLink="/">
+                <i class="ri-home-8-line"></i>
+                Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item fw-semibold">Filler Activities</li>
+    </ol>
+</div>
+
+<mat-card class="mb-25 tagus-card">
+    <!-- <mat-card-header>
+        <h5 class="mb-0">Textual Inputs</h5>
+    </mat-card-header> -->
+    <mat-card-content>
+        <form [formGroup]="fillerfilter" (ngSubmit)="getActivitiesWrapper()">
+            <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-6 col-6" [style.display]="(current_admin?.deleteLead == 1 || current_admin?.admin_id == 5) ? 'block' : 'none'">
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>-- Filler --</mat-label>
+                            <mat-select formControlName="fillerId">
+                                <mat-option *ngFor="let admin of admin_list"
+                                    [value]="admin.aId">{{admin.aName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-6">
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="outline">
+                            <mat-label> -- Client -- </mat-label>
+
+                            <mat-select formControlName="client_id">
+
+                                <!-- Search Input -->
+                                <mat-option class="search-option">
+                                    <input
+                                        matInput
+                                        placeholder="Search Here..."
+                                        #clientName
+                                        (input)="filterUsers(clientName.value)"
+                                        (click)="$event.stopPropagation()"
+                                        (keydown)="onKeydown($event)"
+                                        style="width: 100%; background: transparent;"
+                                    />
+                                </mat-option>
+
+                                <!-- Options -->
+                                <mat-option *ngFor="let user of clientList" [value]="user.id">
+                                    {{ user.name }}
+                                </mat-option>
+
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-6">
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>-- Status --</mat-label>
+                            <mat-select formControlName="status_id">
+                                <mat-option *ngFor="let work of workStatus"
+                                    [value]="work.id">{{work.name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-6">
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>Select a date range</mat-label>
+                            <mat-date-range-input [rangePicker]="picker">
+                                <input formControlName="start_date" matStartDate placeholder="Start date">
+                                <input formControlName="end_date" matEndDate placeholder="End date">
+                            </mat-date-range-input>
+                            <mat-hint class="mt-0" style="font-size: x-small;">MM/DD/YYYY–MM/DD/YYYY</mat-hint>
+                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div [ngClass]="( current_admin?.deleteLead == 1 || current_admin?.admin_id == 5 ) ? 'col-lg-8' : 'col-lg-12'" class="col-md-12 col-sm-12 d-flex align-items-center justify-content-end mb-5 pb-5 mt-5 pt-3">
+                    <button mat-raised-button color="primary" class="button-status me-10">Submit</button>
+                    <button mat-raised-button type="button" color="warn" class="button-status"
+                        (click)="clear()">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>
+<div class="row">
+    <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
+        <mat-card class="mb-25 tagus-card">
+            <!-- <mat-card-header>
+                <h5 class="mb-0">Basic Table</h5>
+            </mat-card-header> -->
+            <mat-card-content>
+                <div class="mat-elevation-z8">
+                    <table mat-table [dataSource]="dataSource">
+            
+                        <!-- Position Column -->
+                        <ng-container matColumnDef="SN">
+                            <th mat-header-cell *matHeaderCellDef> No. </th>
+                            <td mat-cell *matCellDef="let element;let i = index"> {{ (currentPage * pageSize) + i + 1 }} </td>
+                        </ng-container>
+            
+                        <!-- Name Column -->
+                        <ng-container matColumnDef="Lead Details">
+                            <th mat-header-cell *matHeaderCellDef> Lead Details </th>
+                            <td mat-cell *matCellDef="let element"> 
+                                {{element.client_name}}<br/>
+                                {{element.client_mobile}} 
+                            </td>
+                        </ng-container>
+            
+                        <!-- Weight Column -->
+                        <ng-container matColumnDef="Activity">
+                            <th mat-header-cell *matHeaderCellDef> Activity </th>
+                            <td mat-cell *matCellDef="let element"> 
+                                {{element.filler_name}}
+                                <br>
+                                {{element.work_status_name}}
+                                <br>{{element.note}} 
+                            </td>    
+                        </ng-container>
+            
+                        <!-- Symbol Column -->
+                        <ng-container matColumnDef="Created Date">
+                            <th mat-header-cell *matHeaderCellDef> Created Date </th>
+                            <td mat-cell *matCellDef="let element"> 
+                                {{element.added_at}} 
+                            </td>
+                        </ng-container>
+            
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                    </table>
+                    <mat-paginator
+                        [length]="totalRecords"
+                        [pageSize]="pageSize"
+                        [pageIndex]="currentPage"
+                        [pageSizeOptions]="[5,10,20]"
+                        (page)="onPageChange($event)">
+                    </mat-paginator>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

@@ -1,0 +1,386 @@
+<div id="quotationPdf" class="quotation-wrapper pdf-container">
+
+  <!-- ═══════════════════════════════════════════════
+       PAGE 1 — COVER / INTRO
+  ═══════════════════════════════════════════════ -->
+  <div class="page cover-page">
+
+    <!-- Header Bar -->
+    <div class="cover-header">
+      <div class="cover-logo-block">
+        <img src="img/Biz-Logo.webp" class="cover-logo" alt="BizRegistro Logo" />
+      </div>
+      <div class="cover-contact-block">
+        <div class="contact-item">
+          <span class="contact-icon">✉</span>
+          <span>info&#64;bizregistro.com</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-icon">✆</span>
+          <span>+91 97660 90316</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-icon">🌐</span>
+          <span>www.bizregistro.com</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cover-divider"></div>
+
+    <!-- Proposal Meta -->
+    <div class="cover-meta">
+      <div class="cover-meta-row">
+        <span class="cover-meta-label">Proposal Date:</span>
+        <span class="cover-meta-value">{{ today | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="cover-meta-row">
+        <span class="cover-meta-label">Quote No:</span>
+        <span class="cover-meta-value">QT-{{ data?.id }}</span>
+      </div>
+      <div class="cover-meta-row">
+        <span class="cover-meta-label">Client Name:</span>
+        <span class="cover-meta-value">{{ data?.name }}</span>
+      </div>
+    </div>
+
+    <!-- Intro Text -->
+    <div class="cover-intro">
+      <p>
+        Thank you for choosing <strong>BizRegistro</strong>! We are delighted to have the opportunity to assist you in
+        setting up and growing your business. Our expert team is committed to delivering fast, transparent, and
+        100% digital compliance solutions tailored to your needs.
+      </p>
+      <p>
+        At BizRegistro, we don't just file documents — we build businesses.
+        Whether it's a <strong>Startup registration, FSSAI license, GST compliance, Trademark protection,
+        or Company incorporation</strong>, we ensure every process is executed with precision, speed, and
+        complete transparency.
+      </p>
+    </div>
+
+    <!-- Feature Icons Strip -->
+    <div class="cover-features">
+      <div class="feature-item">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-label">Fast Processing</div>
+      </div>
+      <div class="feature-divider"></div>
+      <div class="feature-item">
+        <div class="feature-icon">🛡</div>
+        <div class="feature-label">100% Digital</div>
+      </div>
+      <div class="feature-divider"></div>
+      <div class="feature-item">
+        <div class="feature-icon">👤</div>
+        <div class="feature-label">Dedicated Manager</div>
+      </div>
+      <div class="feature-divider"></div>
+      <div class="feature-item">
+        <div class="feature-icon">✅</div>
+        <div class="feature-label">50,000+ Licenses</div>
+      </div>
+    </div>
+
+    <!-- Outro Text -->
+    <div class="cover-outro">
+      <p>
+        Your business deserves the best start, and we're here to make it happen. Thank you for trusting
+        <strong>BizRegistro</strong> with your compliance journey — we can't wait to help you grow!
+      </p>
+    </div>
+
+    <!-- Quote Banner -->
+    <div class="cover-quote-banner">
+      <p class="cover-quote-text">
+        "Register smart. Start faster. Grow with confidence."
+      </p>
+      <p class="cover-quote-sub">Let's build your business today!</p>
+    </div>
+
+    <div class="page-footer">
+      <span>BizRegistro — Maharashtra's No. 1 Trusted Business License Provider</span>
+      <span class="page-num">1</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       PAGE 2 — QUOTATION TABLE
+  ═══════════════════════════════════════════════ -->
+  <div class="page table-page">
+
+    <div class="page-header-strip">
+      <span class="page-header-brand">BizRegistro</span>
+      <span class="page-header-title">QUOTATION</span>
+    </div>
+
+    <!-- Bill To -->
+    <div class="bill-section">
+      <div class="bill-box">
+        <div class="bill-label">BILL TO</div>
+        <p class="bill-name">{{ data?.name }}</p>
+        <p class="bill-detail">{{ data?.mobile }}</p>
+        <p class="bill-detail">{{ data?.email }}</p>
+      </div>
+      <div class="bill-meta">
+        <div class="bill-meta-row">
+          <span>Date</span>
+          <span>{{ today | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="bill-meta-row">
+          <span>Quote No.</span>
+          <span>QT-{{ data?.id }}</span>
+        </div>
+        <div class="bill-meta-row">
+          <span>Valid For</span>
+          <span>15 Days</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Services Table -->
+    <table class="quotation-table">
+      <thead>
+        <tr>
+          <th class="col-sr">#</th>
+          <th class="col-service">Service</th>
+          <th class="col-scope">Scope of Work</th>
+          <th class="col-price">Price</th>
+          <th class="col-qty">Qty</th>
+          <th class="col-disc">Discount</th>
+          <th class="col-total">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of selectedServices; let i = index" [class.row-alt]="i % 2 !== 0">
+          <td class="col-sr td-center">{{ i + 1 }}</td>
+          <td class="col-service td-service-name">{{ item.sName }}</td>
+          <td class="col-scope">
+            <ul class="scope-list">
+              <li *ngFor="let scope of getScopeOfWork(item.sName)">{{ scope }}</li>
+            </ul>
+          </td>
+          <td class="col-price td-center">₹ {{ item.price | number:'1.2-2' }}</td>
+          <td class="col-qty td-center">{{ item.qty }}</td>
+          <td class="col-disc td-center">{{ item.discount }}%</td>
+          <td class="col-total td-right td-bold">
+            ₹ {{ ((item.price * item.qty) - ((item.price * item.qty) * item.discount / 100)) | number:'1.2-2' }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Summary -->
+    <div class="summary-wrapper">
+      <div class="summary-spacer"></div>
+      <table class="summary-table">
+        <tr class="summary-row">
+          <td class="summary-label">Sub Total</td>
+          <td class="summary-value">₹ {{ getSubTotal() }}</td>
+        </tr>
+        <tr class="summary-row">
+          <td class="summary-label">Total Discount</td>
+          <td class="summary-value discount-value">− ₹ {{ getDiscountTotal() }}</td>
+        </tr>
+        <tr class="summary-row grand-total-row">
+          <td class="summary-label grand-label">Grand Total</td>
+          <td class="summary-value grand-value">₹ {{ getGrandTotal() }}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="page-footer">
+      <span>BizRegistro — Maharashtra's No. 1 Trusted Business License Provider</span>
+      <span class="page-num">2</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       PAGE 3 — TERMS, PAYMENT & BANK DETAILS
+  ═══════════════════════════════════════════════ -->
+  <div class="page info-page">
+
+    <div class="page-header-strip">
+      <span class="page-header-brand">BizRegistro</span>
+      <span class="page-header-title">TERMS &amp; PAYMENT</span>
+    </div>
+
+    <!-- Notes -->
+    <div class="info-section" *ngIf="quotationForm?.value?.notes">
+      <div class="info-section-header">
+        <span class="info-section-icon">📋</span>
+        <h4>Notes</h4>
+      </div>
+      <p class="notes-text">{{ quotationForm.value.notes }}</p>
+    </div>
+
+    <!-- Terms & Conditions -->
+    <div class="info-section">
+      <div class="info-section-header">
+        <span class="info-section-icon">📄</span>
+        <h4>Terms &amp; Conditions</h4>
+      </div>
+      <ul class="terms-list">
+        <li>This quotation is valid for <strong>15 days</strong> from the date of issuance.</li>
+        <li>Fees mentioned are professional/consultancy service charges only.</li>
+        <li>Government fees, stamp duty, or statutory charges are <strong>not included</strong> and will be billed separately.</li>
+        <li>Payment is due within <strong>10 days</strong> of invoice date.</li>
+        <li>Amounts paid are <strong>non-refundable</strong> once the service has commenced.</li>
+        <li>Timelines are subject to client document submission and government processing time.</li>
+        <li>Any changes in scope or additional services will be billed separately.</li>
+        <li>BizRegistro acts as a professional consultancy and is not liable for government authority decisions.</li>
+        <li>Quotation amount may vary by ±10% depending on final scope confirmation.</li>
+        <li>All taxes (GST, etc.) are extra unless explicitly mentioned as inclusive.</li>
+      </ul>
+    </div>
+
+    <!-- Payment Schedule -->
+    <div class="info-section">
+      <div class="info-section-header">
+        <span class="info-section-icon">💳</span>
+        <h4>Payment Schedule</h4>
+      </div>
+      <div class="payment-schedule">
+        <div class="payment-step">
+          <div class="payment-pct">50%</div>
+          <div class="payment-desc">Advance payment at the time of engagement to initiate the process.</div>
+        </div>
+        <div class="payment-step">
+          <div class="payment-pct">50%</div>
+          <div class="payment-desc">Balance payment prior to delivery of the certificate / final document.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bank Details -->
+    <div class="info-section">
+      <div class="info-section-header">
+        <span class="info-section-icon">🏦</span>
+        <h4>Payment Information</h4>
+      </div>
+      <table class="bank-table">
+        <tr>
+          <td class="bank-key">Account Name</td>
+          <td class="bank-val">BizRegistro Services LLP</td>
+        </tr>
+        <tr>
+          <td class="bank-key">Bank Name</td>
+          <td class="bank-val">Canara Bank</td>
+        </tr>
+        <tr>
+          <td class="bank-key">Account Number</td>
+          <td class="bank-val">XXXXXXXXXXXX</td>
+        </tr>
+        <tr>
+          <td class="bank-key">IFSC Code</td>
+          <td class="bank-val">CNRB00XXXXX</td>
+        </tr>
+        <tr>
+          <td class="bank-key">Account Type</td>
+          <td class="bank-val">Current Account</td>
+        </tr>
+        <tr>
+          <td class="bank-key">UPI ID</td>
+          <td class="bank-val">bizregistro&#64;canara</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Footer Thank You -->
+    <div class="thankyou-banner">
+      <p>Thank you for choosing <strong>BizRegistro</strong> — Maharashtra's No. 1 Trusted Business License Provider!</p>
+    </div>
+
+    <div class="page-footer">
+      <span>BizRegistro — Office No. 301, The Business Center, Erandwane, Pune 411004</span>
+      <span class="page-num">3</span>
+    </div>
+  </div>
+
+</div>
+
+
+
+<!-- kkfkkkkkkkkkkkkkkkkkkkkkkkkkk-->
+
+<div class="page pdf-page cover-page">
+        <!-- COVER PAGE  -->
+        <div class="cover-header">
+            <div class="cover-logo-block">
+                <img src="/img/Biz-Logo.webp" class="cover-logo" alt="BizRegistro Logo" />
+            </div>
+            <div class="cover-contact-block">
+                <div class="contact-item">
+                    <span class="contact-icon">✉</span>
+                    <span>info&#64;bizregistro.com</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">✆</span>
+                    <span>+91 97660 90316</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">🌐</span>
+                    <span>www.bizregistro.com</span>
+                </div>
+            </div>
+        </div>
+        <div class="cover-divider"></div>
+
+        <!-- Proposal Meta -->
+        <div class="cover-meta">
+            <div class="cover-meta-row">
+                <span class="cover-meta-label">Proposal Date:</span>
+                <span class="cover-meta-value">{{ today | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="cover-meta-row">
+                <span class="cover-meta-label">Client Name:</span>
+                <span class="cover-meta-value">{{ data?.name }}</span>
+            </div>
+        </div>
+
+        <!-- INTRODUCTION FOR THE BIZregistro  -->
+        <div class="cover-intro">
+            <p>
+                Thank you for choosing <strong>BizRegistro</strong>! We are delighted to have the opportunity to assist
+                you in
+                setting up and growing your business. Our expert team is committed to delivering fast, transparent, and
+                100% digital compliance solutions tailored to your needs.
+            </p>
+            <p>
+                At BizRegistro, we don't just file documents — we build businesses.
+                Whether it's a <strong>Startup registration, FSSAI license, GST compliance, Trademark protection,
+                    or Company incorporation</strong>, we ensure every process is executed with precision, speed, and
+                complete transparency.
+            </p>
+        </div>
+
+        <div class="cover-features">
+            <div class="feature-item">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-label">Fast Processing</div>
+            </div>
+            <div class="feature-divider"></div>
+            <div class="feature-item">
+                <div class="feature-icon">🛡</div>
+                <div class="feature-label">100% Digital</div>
+            </div>
+            <div class="feature-divider"></div>
+            <div class="feature-item">
+                <div class="feature-icon">👤</div>
+                <div class="feature-label">Dedicated Manager</div>
+            </div>
+            <div class="feature-divider"></div>
+            <div class="feature-item">
+                <div class="feature-icon">✅</div>
+                <div class="feature-label">50,000+ Licenses</div>
+            </div>
+        </div>
+
+        <!-- Outro Text -->
+        <div class="cover-outro">
+            <p>
+                Your business deserves the best start, and we're here to make it happen. Thank you for trusting
+                <strong>BizRegistro</strong> with your compliance journey — we can't wait to help you grow!
+            </p>
+        </div>
+    </div>

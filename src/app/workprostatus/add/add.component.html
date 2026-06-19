@@ -1,0 +1,41 @@
+<p>add works!</p>
+<ng-container *ngIf="visible">
+    <div class="dt-modal-overlay">
+        <div class="dt-modal-box" style="height: fit-content;">
+
+            <div class="dt-modal-header">
+                <h3 class="dt-modal-title">#Add New Work Status</h3>
+                <span (click)="onClose()" class="dt-modal-close">&times;</span>
+            </div>
+
+            <div class="dt-modal-body">
+                <form [formGroup]="form" (ngSubmit)="submit()" style="margin-bottom: 50px;padding-bottom:30px !important;">
+                    <mat-card>
+                        <!-- <mat-card-title>Convert Lead</mat-card-title> -->
+                        <mat-card-content>
+                            <div class="row g-3 mt-10 mb-0">
+
+                                <div class="col-md-12 row" style="margin-top: 6px;display: flex;justify-content: space-evenly;">
+                                    <div class="col-md-12 mb-1">
+                                        <mat-form-field appearance="outline" class="w-100">
+                                            <mat-label>Work Status Name</mat-label>
+                                            <input matInput formControlName="name" />
+                                            <mat-error *ngIf="form.get('name')?.hasError('required')">Work Status Name is Required</mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                    
+                            </div>  
+                        </mat-card-content>
+                        <mat-card-actions class="row mt-0">
+                            <div class="col-md-12  d-flex justify-content-center" style="column-gap: 30px;margin-bottom: 0px;">
+                                <button mat-raised-button color="primary" type="submit">Save</button>
+                                <button mat-raised-button type="button" color="warn" (click)="onClose()">Cancel</button>
+                            </div>   
+                        </mat-card-actions>
+                    </mat-card>
+                </form>
+            </div>
+        </div>
+    </div>
+</ng-container>

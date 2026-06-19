@@ -1,0 +1,116 @@
+<div class="dt-modal-overlay">
+    <div class="dt-modal-box">
+
+        <div class="dt-modal-header">
+            <h3 class="dt-modal-title">#{{data.name}}</h3>
+            <span (click)="onClose()" class="dt-modal-close">&times;</span>
+        </div>
+
+        <div class="dt-modal-body">
+            <form [formGroup]="activityForm" (ngSubmit)="submitActivity()">
+                <div class="row">
+                    <!-- Status -->
+                    <div class="form-row col-12 mb-2">
+                        <label class="form-label">Status
+                            <span style="color:red; font-size:0.8em;" 
+                                *ngIf="activityForm.get('status')?.hasError('required')">
+                                Required
+                            </span>   
+                        </label>
+                        <select formControlName="status" class="input-control">
+                            <option value="" disabled>Select status</option>
+                            <option *ngFor="let status of statusList" value="{{status.status_id}}">{{status.name}}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row col-12 mb-2 tagus-form-group without-icon" [ngStyle]="{ 'display': activityForm.get('status')?.value == '5' ? 'block'  : 'none' }">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>Reason
+                                <span style="color:red; font-size:0.8em;" 
+                                        *ngIf="activityForm.get('reason')?.hasError('required')">
+                                    Required
+                                </span>    
+                            </mat-label>
+                            <mat-select formControlName="reason">
+                                <mat-option *ngFor="let reason of reasonList | async"
+                                    [value]="reason.id">{{reason.name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>Service
+                                <span style="color:red; font-size:0.8em;" 
+                                        *ngIf="activityForm.get('services')?.hasError('required')">
+                                    Required
+                                </span>    
+                            </mat-label>
+                            <mat-select multiple formControlName="services">
+                                <mat-option value="" [disabled]="true">-- Select Status --</mat-option>
+                                <mat-option *ngFor="let service of services"
+                                    [value]="service.sId">{{service.sName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- next call date -->
+                    <div class="form-row col-12 mb-2">
+                        <label class="form-label"> Next Call Date 
+                            <span style="color:red; font-size:0.8em;" 
+                                    *ngIf="activityForm.get('next_date')?.hasError('required')">
+                                Required
+                            </span>
+                        </label>
+
+                        <input formControlName="next_date" class="input-control" name="next_date" type="date" />
+                    </div>
+
+
+                    <!-- Description -->
+                    <div class="dt-form-group col-12 mb-2">
+                        <label class="form-label">Enter Description 
+                            <span style="color:red; font-size:0.8em;" 
+                                    *ngIf="activityForm.get('description')?.hasError('required')">
+                                Required
+                            </span>    
+                        </label>
+                        <textarea formControlName="description" class="input-control" value="" placeholder="Enter description"></textarea>
+                    </div>
+
+
+                    <!-- Submit -->
+                    <div class="form-actions col-12 mb-2">
+                        <button type="submit" class="btn-save">Save</button>
+                        <button type="button" class="btn-cancel" (click)="onClose()">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="dt-modal-footer">
+            <ul class="call-timeline">
+                <ng-container *ngFor="let act of leadAct">
+                    <li class="timeline-item">
+                        <span class="play-icon">▶</span>
+
+                        <div class="timeline-content">
+                            <div class="date">{{act?.added_on}}</div>
+
+                            <div class="details">
+                                <span class="name">{{act?.handledBy}}</span>
+                                <span class="note"> - {{act?.description}}</span>
+                                <span class="to"> To {{act?.statusName}}</span>
+                            </div>
+
+                            <div class="duration" *ngIf="act?.rName">
+                                Reason:- {{act?.rName}}
+                            </div>
+                        </div>
+                    </li>
+                </ng-container>
+
+            </ul>
+        </div>
+    </div>
+</div>

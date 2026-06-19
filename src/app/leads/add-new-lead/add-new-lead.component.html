@@ -1,0 +1,136 @@
+<p>add-new-lead works!</p>
+<div class="dt-modal-overlay" *ngIf="visible">
+    <div class="dt-modal-box">
+
+        <div class="dt-modal-header">
+            <h3 class="dt-modal-title">#Add New Lead</h3>
+            <span class="dt-modal-close" (click)="onClose()">&times;</span>
+        </div>
+
+        <div class="dt-modal-body">
+            <form [formGroup]="form" (ngSubmit)="submit()" style="margin-bottom: 1px;padding-bottom:30px !important;">
+                <mat-card>
+                    <!-- <mat-card-title>Convert Lead</mat-card-title> -->
+                    <mat-card-content>
+                        <div class="row g-3 mt-10 mb-0">
+                            <div class="col-md-4 mb-4">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Name</mat-label>
+                                    <input matInput formControlName="name" />
+                                    <mat-error *ngIf="form.get('name')?.hasError('required')">Name is
+                                        required</mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-md-4 mb-4">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Mobile</mat-label>
+                                    <input matInput formControlName="mobile" type="tel" />
+                                    <mat-error *ngIf="form.get('mobile')?.hasError('required')">Mobile is
+                                        required</mat-error>
+                                    <mat-error *ngIf="form.get('mobile')?.hasError('pattern')">Enter valid mobile
+                                        number</mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-md-4 mb-4">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Email</mat-label>
+                                    <input matInput formControlName="email" type="email" />
+                                    <mat-error *ngIf="form.get('email')?.hasError('required')">Email is
+                                        required</mat-error>
+                                    <mat-error *ngIf="form.get('email')?.hasError('email')">Enter valid
+                                        email</mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-md-12 mb-4">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Services</mat-label>
+                                    <mat-select formControlName="services" multiple>
+                                        <mat-option *ngFor="let s of services" [value]="s.sId">{{ s.sName
+                                            }}</mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="form.get('services')?.hasError('required')">Select at least one
+                                        service</mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-md-4 mb-4">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>City</mat-label>
+                                    <input matInput formControlName="city" />
+                                    <mat-error *ngIf="form.get('city')?.hasError('required')">City is
+                                        required</mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-md-4 mb-4">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Source</mat-label>
+                                    <!-- <input matInput formControlName="source" /> -->
+                                    <mat-select formControlName="source">
+                                        <mat-option *ngFor="let s of source;let i = index" value="{{s.id}}">{{s.name}}</mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="form.get('source')?.hasError('required')">Source is
+                                        required</mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-md-4 mb-4">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Status</mat-label>
+                                    <mat-select formControlName="status">
+                                        <mat-option *ngFor="let status of statusList;let i = index" value="{{status.status_id}}">{{status.name}}</mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="form.get('status')?.hasError('required')">Status is
+                                        required</mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-md-12 mb-4">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Description</mat-label>
+                                    <textarea matInput formControlName="description" rows="3"></textarea>
+                                    <mat-error *ngIf="form.get('description')?.hasError('required')">Description is
+                                        required</mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Next Follow‑up Date</mat-label>
+                                    <input matInput [matDatepicker]="nextPicker" formControlName="nextDate" />
+                                    <mat-datepicker-toggle matSuffix [for]="nextPicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #nextPicker></mat-datepicker>
+                                    <mat-error *ngIf="form.get('nextDate')?.hasError('required')">Next date is
+                                        required</mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <!-- <div class="col-md-6">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Handled By</mat-label>
+                                    <mat-select formControlName="handled_by">
+                                        <mat-option *ngFor="let bde of bde"
+                                            [value]="bde.aId">{{bde.aName}}</mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="form.get('handled_by')?.hasError('required')">Handled By is
+                                        required</mat-error>
+                                </mat-form-field>
+                            </div> -->
+                        </div>
+                    </mat-card-content>
+                    <mat-card-actions class="row mb-5">
+                        <div class="col-md-12  d-flex justify-content-center"
+                            style="column-gap: 30px;margin-bottom: 10px;">
+                            <button mat-raised-button color="primary" type="submit">Save</button>
+                            <button mat-button type="button" class="bg-danger text-white"
+                                (click)="onClose()">Cancel</button>
+                        </div>
+                    </mat-card-actions>
+                </mat-card>
+            </form>
+        </div>
+    </div>
+</div>

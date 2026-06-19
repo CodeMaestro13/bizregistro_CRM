@@ -1,0 +1,236 @@
+<div
+    class="sidebar-area bg-white box-shadow"
+    [ngClass]="{'active': isToggled}"
+    [class.dark-sidebar]="themeService.isSidebarDark()"
+    [class.right-sidebar]="themeService.isRightSidebar()"
+    [class.hide-sidebar]="themeService.isHideSidebar()"
+>
+    <div class="logo bg-white">
+        <a routerLink="" class="d-flex align-items-center">
+            <img src="img/Biz-Logo.webp" class="img-fluid" title="Speakengly" alt="Speakengly">
+        </a>
+    </div>
+    <div class="burger-menu" (click)="toggle()" [ngClass]="{'active': isToggled}">
+        <span class="top-bar"></span>
+        <span class="middle-bar"></span>
+        <span class="bottom-bar"></span>
+    </div>
+    <ng-scrollbar visibility="hover" style="height: 100vh;">
+        <div class="sidebar-inner">
+            <div class="sidebar-menu mt-5">
+                <mat-accordion>
+                    <a routerLink="" class="sidebar-menu-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                        <i class="flaticon-menu-1"></i>
+                        <span class="title">Dashboard</span>
+                    </a>
+
+                    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = true">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                <i class="flaticon-activity"></i>
+                                <span class="title">Activity </span>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <mat-accordion>
+                            <ul class="sidebar-sub-menu">
+                                <li class="sidemenu-item">
+                                    <a routerLink="activities" href="javascript:void(0)" *ngIf="userData?.type === '1' || userData.deleteLead == 1 || userData.admin_id == 5" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                        BDE
+                                    </a>
+                                </li>
+                                <li class="sidemenu-item">
+                                    <a routerLink="activities/filler" href="javascript:void(0)" *ngIf="userData?.type === '2' || userData.deleteLead == 1 || userData.admin_id == 5" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                        Filling
+                                    </a>
+                                </li>
+                            </ul>
+                        </mat-accordion>
+                    </mat-expansion-panel>
+
+                    <a routerLink="leads" class="sidebar-menu-link" *ngIf="userData?.type === '1'" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                        <i class="flaticon-customer-service"></i>
+                        <span class="title">Leads</span>
+                    </a>                    
+                    
+                    <a routerLink="clients" class="sidebar-menu-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                        <i class="flaticon-user"></i>
+                        <span class="title">Clients</span>
+                    </a>
+
+                    <mat-expansion-panel (opened)="panelOpenState = true" *ngIf="userData?.type === '1'" (closed)="panelOpenState = true">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                <i class="flaticon-growth-1"></i>
+                                <span class="title">Payment </span>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <mat-accordion>
+                            <ul class="sidebar-sub-menu">
+                                <li class="sidemenu-item">
+                                    <a routerLink="pending" href="javascript:void(0)" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                        Pending
+                                    </a>
+                                </li>
+                                <li class="sidemenu-item">
+                                    <a routerLink="receipt" href="javascript:void(0)" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                        Receipt
+                                    </a>
+                                </li>
+                            </ul>
+                        </mat-accordion>
+                    </mat-expansion-panel>
+
+                    
+                    
+                    
+
+                    <mat-expansion-panel (opened)="panelOpenState = true" *ngIf="userData?.type === '1'" (closed)="panelOpenState = true">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                <i class="flaticon-customer-service"></i>
+                                <span class="title">Add New </span>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <mat-accordion>
+                            <ul class="sidebar-sub-menu">
+                                <li class="sidemenu-item">
+                                    <a routerLink="services" href="javascript:void(0)" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                        services
+                                    </a>
+                                </li>
+                                <li class="sidemenu-item">
+                                    <a routerLink="work-status" href="javascript:void(0)" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                        Work Status
+                                    </a>
+                                </li>
+                            </ul>
+                        </mat-accordion>
+                    </mat-expansion-panel>
+                    
+
+                    <a routerLink="authentication/logout" class="sidebar-menu-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                        <i class="flaticon-tools"></i>
+                        <span class="title">Logout</span>
+                    </a>
+                    <!-- <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = true">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                <i class="flaticon-down-filled-triangular-arrow"></i>
+                                <span class="title">Multi Level Menu</span>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <mat-accordion>
+                            <ul class="sidebar-sub-menu">
+                                <li class="sidemenu-item">
+                                    <a href="javascript:void(0)" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                        First
+                                    </a>
+                                </li>
+                                <li class="sidemenu-item">
+                                    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = true">
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>
+                                                Second
+                                            </mat-panel-title>
+                                        </mat-expansion-panel-header>
+                                        <ul class="sidebar-sub-menu">
+                                            <li class="sidemenu-item">
+                                                <a href="javascript:void(0)" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                                    Second 1
+                                                </a>
+                                            </li>
+                                            <li class="sidemenu-item">
+                                                <mat-accordion>
+                                                    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = true">
+                                                        <mat-expansion-panel-header>
+                                                            <mat-panel-title>
+                                                                Second 2
+                                                            </mat-panel-title>
+                                                        </mat-expansion-panel-header>
+                                                        <ul class="sidebar-sub-menu">
+                                                            <li class="sidemenu-item">
+                                                                <a href="javascript:void(0)" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                                                    Third 1
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </mat-expansion-panel>
+                                                </mat-accordion>
+                                            </li>
+                                        </ul>
+                                    </mat-expansion-panel>
+                                </li>
+                                <li class="sidemenu-item">
+                                    <a href="javascript:void(0)" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                        Third
+                                    </a>
+                                </li>
+                            </ul>
+                        </mat-accordion>
+                    </mat-expansion-panel> -->
+                    
+                </mat-accordion>
+            </div>
+        </div>
+    </ng-scrollbar>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <!-- <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = true">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                <i class="flaticon-menu-1"></i>
+                                <span class="title">Dashboard</span>
+                                <span class="badge">7</span>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <ul class="sidebar-sub-menu">
+                            <li class="sidemenu-item">
+                                <a routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                    eCommerce
+                                </a>
+                            </li>
+                            <li class="sidemenu-item">
+                                <a routerLink="analytics" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                    Analytics
+                                </a>
+                            </li>
+                            <li class="sidemenu-item">
+                                <a routerLink="project-management" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                    Project Management
+                                </a>
+                            </li>
+                            <li class="sidemenu-item">
+                                <a routerLink="lms-courses" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                    LMS Courses
+                                </a>
+                            </li>
+                            <li class="sidemenu-item">
+                                <a routerLink="crypto" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                    Crypto <span class="badge">New</span>
+                                </a>
+                            </li>
+                            <li class="sidemenu-item">
+                                <a routerLink="help-desk" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                    Help/Support Desk <span class="badge">New</span>
+                                </a>
+                            </li>
+                            <li class="sidemenu-item">
+                                <a routerLink="saas-app" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidemenu-link">
+                                    SaaS App <span class="badge">New</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </mat-expansion-panel> -->

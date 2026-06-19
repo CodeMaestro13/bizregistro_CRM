@@ -1,0 +1,291 @@
+<div class="breadcrumb-card mb-15 mt-25 d-md-flex align-items-center justify-content-space-between">
+    <h5 class="mb-0">Clients</h5>
+    <ol class="breadcrumb mb-0 ps-0">
+        <li class="breadcrumb-item">
+            <a routerLink="/">
+                <i class="ri-home-8-line"></i>
+                Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item fw-semibold">Clients</li>
+    </ol>
+</div>
+
+<mat-card class="mb-25 tagus-card">
+    <mat-card-content>
+        <form [formGroup]="clientFilter" (ngSubmit)="filterClients()">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-4">
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <i class="ri-user-3-line"></i>
+                            <mat-label>Enter client name</mat-label>
+                            <input matInput formControlName="name" #nameInput [matAutocomplete]="names">
+                            <mat-autocomplete #names="matAutocomplete">
+                                <mat-option *ngFor="let name of namelist" [value]="name.name">
+                                    <span>{{name.name}}</span>
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-4">
+                    <div class="tagus-form-group without-icon">
+                        <label class="d-none mb-12 fw-semibold gray-color">Email Address</label>
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <i class="ri-mail-line"></i>
+                            <mat-label>Enter email address</mat-label>
+                            <input matInput formControlName="email" #emailInput [matAutocomplete]="emails">
+                            <mat-autocomplete #emails="matAutocomplete">
+                                <mat-option *ngFor="let email of emailList" [value]="email.email">
+                                    <span>{{email.email}}</span>
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-4">
+                    <div class="tagus-form-group without-icon">
+                        <label class="d-none mb-12 fw-semibold gray-color">Mobile Number</label>
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <i class="ri-phone-line"></i>
+                            <mat-label>Enter phone number</mat-label>
+                            <input matInput formControlName="mobile" #mobileInput [matAutocomplete]="numbers">
+                            <mat-autocomplete #numbers="matAutocomplete">
+                                <mat-option *ngFor="let number of numberList" [value]="number.mobile">
+                                    <span>{{number.mobile}}</span>
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-4">
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>Service</mat-label>
+                            <mat-select multiple formControlName="service">
+                                <!-- <mat-option value="">-- Select Status --</mat-option> -->
+                                <mat-option *ngFor="let service of services"
+                                    [value]="service.sId">{{service.sName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-4">
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>Handled By</mat-label>
+                            <mat-select formControlName="handledBy">
+                                <!-- <mat-option value="">-- Select Status --</mat-option> -->
+                                <mat-option *ngFor="let admin of admins"
+                                    [value]="admin.aId">{{admin.aName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12 d-flex align-items-center justify-content-end">
+                    <button mat-raised-button class="button-status me-10"
+                        [ngStyle]="{'background-color': submitButtonColor, 'color':'#fff'}">Search</button>
+                    <button mat-raised-button type="button" class="button-status" (click)="clear()"
+                        [ngStyle]="{'background-color': cancelButtonColor, 'color':'#fff'}">Clear</button>
+                </div>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>
+
+<div class="row">
+    <div class="col-lg-12 col-xxl-12">
+        <mat-card class="mb-25 tagus-card" style="padding-left: 10px !important;padding-right: 10px !important;"
+            [class.component-dark-theme]="themeService.isDark()"
+            [class.component-rtl-enabled]="themeService.isRTLEnabled()">
+            <mat-card-content>
+                <div class="clients-table-wrap">
+                    <table class="clients-tbl">
+                        <colgroup>
+                            <col style="width:10px">
+                            <col style="width:25%">
+                            <col style="width:24%">
+                            <col style="width:20%">
+                            <col style="width:13%">
+                            <col style="width:13%">
+                        </colgroup>
+
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Client Details</th>
+                                <th>Work Progress</th>
+                                <th>Finance</th>
+                                <th>Address</th>
+                                <th>Added On</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr *ngFor="let item of clientsList; let i = index">
+
+                                <!-- # -->
+                                <td><span class="idx">{{ i + 1 }}</span></td>
+
+                                <!-- Client Details -->
+                                <td>
+                                    <div class="client-name" [matTooltip]="item.name" style="font-size: 16px; font-weight: 600;">{{ item.name }}</div>
+                                    <div class="meta-row client-name" [matTooltip]="item.email" style="font-size: 12px !important;margin-bottom:0px;font-weight:normal;">
+                                        <!-- <i class="ri-mail-line"></i> -->
+                                        <p>{{ item.email }}</p>
+                                    </div>
+                                    <div class="meta-row" style="font-size: 13px;">
+                                        <i class="ri-phone-line"></i>
+                                        <p>{{ item.mobile }}</p>
+                                    </div>
+
+                                    <ng-container *ngIf="serviceArray(item.servicesName) as services">
+                                        <ng-container *ngIf="services.length; else noServices">
+                                            <div class="services-wrap">
+                                                <span class="services-label">Services:</span>
+                                                <span *ngFor="let s of services | slice:0:3" class="service-pill">{{ s
+                                                    }}</span>
+                                                <span *ngIf="services.length > 3" class="more-pill"
+                                                    [matTooltip]="services.slice(3).join(', ')">
+                                                    +{{ services.length - 3 }} more
+                                                </span>
+                                            </div>
+                                        </ng-container>
+                                        <ng-template #noServices>
+                                            <div class="meta-row" style="margin-top:7px">
+                                                <span class="no-data">No service assigned</span>
+                                            </div>
+                                        </ng-template>
+                                    </ng-container>
+                                </td>
+
+                                <!-- Work Progress -->
+                                <td>
+                                    <ng-container *ngIf="item?.work_progress?.length > 0; else noWorkProgress">
+                                        <div class="work-scroll" style="height:stretch">
+                                            <div class="work-item" *ngFor="let work of item?.work_progress">
+                                                <div class="work-status">{{ work?.status }}</div>
+                                                <div class="work-note">{{ work?.note }}</div>
+                                                <div class="work-date">{{ work?.date | date:'short' }}</div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                    <ng-template #noWorkProgress>
+                                        <div class="no-work">Working not started yet!</div>
+                                    </ng-template>
+                                    <button class="btn-edit-work" (click)="openWorkForm(item)">
+                                        <i class="ri-edit-line"></i>
+                                    </button>
+                                </td>
+
+                                <!-- Finance -->
+                                <td>
+                                    <div class="finance-card">
+                                        <div class="finance-handler" [matTooltip]="item?.handledBy">
+                                            <i class="ri-user-line" style="margin-right:4px"></i>{{ item?.handledBy }}
+                                        </div>
+                                        <div class="finance-row">
+                                            <span class="finance-label">Full</span>
+                                            <span class="f-full">₹{{ item.full_amount | number:'1.0-0' }}</span>
+                                        </div>
+                                        <div class="finance-row">
+                                            <span class="finance-label">Paid</span>
+                                            <span class="f-paid">₹{{ item.total_paid | number:'1.0-0' }}</span>
+                                        </div>
+                                        <div class="finance-row">
+                                            <span class="finance-label">Remaining</span>
+                                            <span class="f-rem">₹{{ item.remaining_amount | number:'1.0-0' }}</span>
+                                        </div>
+                                        <div class="progress-bar-bg">
+                                            <div class="progress-bar-fill"
+                                                [style.width.%]="item.full_amount > 0 ? (item.total_paid / item.full_amount) * 100 : 0">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- Address -->
+                                <td>
+                                    <div class="addr" [matTooltip]="item.address">
+                                        {{ item.address ? (item.address.slice(0, 60) + (item.address.length > 60 ? '...'
+                                        : '')) : '—' }}
+                                    </div>
+                                </td>
+
+                                <!-- Added On + Actions -->
+                                <td>
+                                    <div class="date-text">{{ item.created_at | date:'medium' }}</div>
+                                    <div class="btn-grp">
+                                        <button *ngIf="deleteLead === 1" class="btn-action" (click)="editClient(item)"
+                                            matTooltip="Details">
+                                            <i class="ri-information-line"></i>
+                                        </button>
+                                        <button class="btn-action" (click)="addOnClient(item)" matTooltip="Add On">
+                                            <i class="ri-add-circle-line"></i>
+                                        </button>
+                                        <button class="btn-action" (click)="payment(item)" matTooltip="Payment">
+                                            <i class="ri-money-rupee-circle-line"></i>
+                                        </button>
+                                        <button *ngIf="deleteLead === 1" class="btn-action danger"
+                                            (click)="deleteClient(item)" matTooltip="Delete">
+                                            <i class="ri-delete-bin-line"></i>
+                                        </button>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row col-md-12">
+                    <nav style="display: flex;justify-content: center;" aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0);"
+                                    (click)="clientFilter.get('page')?.value == 1 ? null : pagination('first')"
+                                    aria-label="Previous">
+                                    <span aria-hidden="true">First</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0);"
+                                    (click)="clientFilter.get('page')?.value == 1 ? null : pagination('privious')">Privious</a>
+                            </li>
+                            <li class="page-item" style="padding: 0px 5px !important;">
+                                <!-- <input type="number" [value]="pageNo" #pageInput style="height:100%;box-sizing: border-box !important;padding:auto 10px;"> -->
+                                <a class="page-link" href="javascript:void(0);">{{pageNo}}</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0);"
+                                    (click)="clientFilter.get('page')?.value == ttlPage ? null : pagination('next')">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0);"
+                                    (click)="clientFilter.get('page')?.value == ttlPage ? null : pagination('last')"
+                                    aria-label="Next">
+                                    <span aria-hidden="true">Last</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+
+
+
+
+<app-edit-details *ngIf="selectedClient" [data]="selectedClient" [adminList]="admins" [servicesList]="services"
+    (closed)="closeEditDetails($event)"></app-edit-details>
+<app-payments *ngIf="clientPayment" [data]="clientPayment" [adminList]="admins" [servicesList]="services"
+    (closed)="closePaymentDetails($event)"></app-payments>
+<app-addonservice *ngIf="addOnClientDetails" [data]="addOnClientDetails"
+    (closed)="closeAddOnDetails($event)"></app-addonservice>
+
+<app-work-process-form *ngIf="workFormDat" [data]="workFormDat"
+    (closed)="closedWorkForm($event)"></app-work-process-form>

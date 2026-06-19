@@ -1,0 +1,21 @@
+<mat-card class="mb-20">
+    <mat-card-content>
+
+        <div class="row d-flex mb-10 item-align-center justify-content-center">
+            <div class="col-md-12 mb-0 text-center">
+                <h5 class="mb-2 mt-2">Lead Activity by BD</h5>
+            </div>
+            <!-- <div class="col-md-3">
+        <input type="date" #dateI class="form-control">
+    </div>
+    <div class="col-md-3">
+        <button (click)="takeReportGraphData(dateI.value)" class="fbutton">Show</button>
+    </div>     -->
+        </div>
+        <div *ngIf="chartOptions" class="active-courses-box">
+            <apx-chart [series]="chartOptions.series!" [chart]="chartOptions.chart!" [xaxis]="chartOptions.xaxis!"
+                [colors]="chartOptions.colors!" [legend]="chartOptions.legend!" [dataLabels]="chartOptions.dataLabels!"
+                [yaxis]="chartOptions.yaxis!" [grid]="chartOptions.grid!"></apx-chart>
+        </div>
+    </mat-card-content>
+</mat-card>

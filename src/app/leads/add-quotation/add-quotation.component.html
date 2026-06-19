@@ -1,0 +1,335 @@
+<div class="dt-modal-overlay">
+    <div class="dt-modal-box-quotation">
+        <!-- Header -->
+        <div class="dt-modal-header">
+            <h3 class="dt-modal-title">
+                Add Quotation ->
+                <strong>{{ data?.name || 'Lead' }}</strong>
+            </h3>
+            <span (click)="onClose()" class="dt-modal-close">&times;</span>
+        </div>
+        <!-- Body -->
+        <div class="dt-modal-body">
+            <form [formGroup]="quotationForm" (ngSubmit)="submitQuotation()">
+                <div class="row">
+                    <!-- Service selector -->
+                    <div class="tagus-form-group without-icon col-12 mb-3">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>Select Service</mat-label>
+                            <mat-select multiple formControlName="services">
+                                <mat-option *ngFor="let service of services" [value]="service">
+                                    {{ service.sName }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <!-- creation of table  -->
+                    <div class="col-12 mt-3" *ngIf="selectedServices.length > 0">
+                        <table class="table table-bordered align-middle">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Service Name</th>
+                                    <th>Price/Rate (₹)</th>
+                                    <th>Quantity</th>
+                                    <th>Discount(₹)</th>
+                                    <th>Total Amount (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of selectedServices; let i = index">
+                                    <td>{{ i + 1 }}. </td>
+                                    <td><strong>{{ item.sName }}</strong></td>
+                                    <td>
+                                        <label>Price</label>
+                                        <input type="number" class="input-control" [(ngModel)]="item.price"
+                                            [ngModelOptions]="{ standalone: true }" placeholder="Enter price" />
+                                    </td>
+                                    <td>
+                                        <label>Quantity</label>
+                                        <input type="number" class="input-control" [(ngModel)]="item.qty"
+                                            [ngModelOptions]="{ standalone: true }" placeholder="Enter quantity" />
+                                    </td>
+                                    <td>
+                                        <label>Discount</label>
+                                        <input type="number" class="input-control" [(ngModel)]="item.discount"
+                                            [ngModelOptions]="{ standalone: true }" placeholder="Enter discount given " />
+                                    </td>
+                                    <td>{{ (item.price * item.qty - item.discount) | number }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Billing Details -->
+                    <div class="col-12 mt-4">
+                        <h4 class="mb-3">Billing Details</h4>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Company Name</label>
+                                <input
+                                    type="text"
+                                    class="input-control"
+                                    formControlName="companyName"
+                                    placeholder="Enter company name"
+                                />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Billing Mobile</label>
+                                <input
+                                    type="text"
+                                    class="input-control"
+                                    formControlName="billingMobile"
+                                    placeholder="Enter mobile number"
+                                />
+                            </div>
+                            <!-- <div class="col-md-6 mb-3">
+                                <label>Billing Email</label>
+                                <input
+                                    type="email"
+                                    class="input-control"
+                                    formControlName="billingEmail"
+                                    placeholder="Enter billing email"
+                                />
+                            </div> -->
+                                <div class="col-md-6 mb-3">
+                                    <label>Client Address</label>
+                                    <input type="text" class="input-control" formControlName="addressClient" placeholder="Enter client address" />
+                                </div> 
+                        </div>
+                    </div>
+                            <!-- Notes -->
+                            <!-- <div class="dt-form-group col-12 mb-3">
+                                <label class="form-label">Notes</label>
+                                <textarea formControlName="notes" class="input-control" placeholder="Enter quotation notes">
+                                </textarea>
+                            </div> -->
+                            <!-- Actions -->
+                    <div class="form-actions col-12 mb-2 d-flex gap-2 flex-wrap">
+                        <button type="button" class="btn-save" (click)="savePdf()" [disabled]="isGeneratingPdf">
+                            <span *ngIf="!isGeneratingPdf"> Save PDF </span>
+                            <span *ngIf="isGeneratingPdf"> Generating PDF... </span>
+                        </button>
+                        <!-- <button type="button" class="btn-save" (click)="sendWhatsApp()">
+                            Send Quotation via WhatsApp
+                        </button> -->
+                        <button type="button" class="btn-cancel" (click)="onClose()">
+                            Cancel
+                        </button>
+                    </div>  
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="pdf-loader-overlay" *ngIf="isGeneratingPdf">
+
+    <div class="pdf-loader-box">
+
+        <div class="spinner"></div>
+
+        <p>Generating PDF, please wait...</p>
+
+    </div>
+
+</div>
+
+<!--  added code for the pdf hide k liye  -->
+
+<!-- PDF TEMPLATE -->
+
+<div id="quotationPdf" class="quotation-wrapper">
+    <!-- MY TABLE section  -->
+    <!-- <div class="page pdf-page table-page"> -->
+    <div class="page pdf-page table-page"
+        *ngFor="let servicePage of quotationServicePages; let pageIndex = index">
+        <div class="cover-header" *ngIf="pageIndex === 0">
+            <div class="cover-logo-block">
+                <img src="/img/Biz-Logo.webp" class="cover-logo" alt="BizRegistro Logo" />
+            </div>
+            <div class="cover-contact-block">
+                <div class="contact-item">
+                    <span class="contact-icon">✉</span>
+                    <span>info&#64;bizregistro.com</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">✆</span>
+                    <span>+91 97660 90316</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">🌐</span>
+                    <span>www.bizregistro.com</span>
+                </div>
+            </div>
+        </div>
+        <div class="cover-divider" *ngIf="pageIndex === 0"></div>
+
+        <div class="page-header-strip" *ngIf="pageIndex === 0">
+            <span class="page-header-brand">QUOTATION</span>
+            <!-- <span class="page-header-title">bIZREGISTRO</span> -->
+        </div>
+
+        <!-- Bill To -->
+        <div class="bill-section" *ngIf="pageIndex === 0">
+            <div class="bill-box">
+                <div class="bill-label">BILL TO</div>
+                <p class="bill-name">{{ quotationForm.value.companyName || data?.name }}</p>
+                <p class="bill-detail">{{ quotationForm.value.billingMobile || data?.mobile }}</p>
+                <p class="bill-detail">{{ quotationForm.value.billingEmail || data?.email }}</p>
+                <p class="bill-detail">{{ quotationForm.value.addressClient || data?.address }}</p>
+            </div>
+            <div class="bill-meta">
+                <div class="bill-meta-label">FROM</div>
+                <div class="bill-meta-row"><span><strong>BizRegistro Services LLP</strong></span></div>
+                <div class="bill-meta-row"><span>Office No:-303,The Bussiness Center,</span></div>
+                <div class="bill-meta-row"><span>Near Sinhgad Collage,Erandwane,Pune</span></div>
+                <div class="bill-meta-row"><span>+91 9766090316</span></div>
+                <div class="bill-meta-row"><span>Date: {{ today | date:'dd/MM/yyyy' }}</span></div>
+            </div>
+        </div>
+
+        <!-- Services Table -->
+        <table class="quotation-table1">
+            <thead>
+                <tr>
+                    <th class="col-sr">#</th>
+                    <th class="col-service">Service</th>
+                    <th class="col-scope">Scope of Work</th>
+                    <th class="col-price">Price/Rate</th>
+                    <th class="col-qty">Qty</th>
+                     <!-- <th class="col-disc">Discount</th> -->
+                    <th class="col-total">Total Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of servicePage; let i = index" class="service-row"
+                    [class.row-alt]="i % 2 !== 0">
+                    <td class="col-sr td-center">{{ getServiceNumber(pageIndex, i) }}</td>
+                    <td class="col-service td-service-name">{{ item.sName }}</td>
+                    <td class="col-scope">
+                        <ul class="scope-list">
+                            <li *ngFor="let scope of getScopeOfWork(item.sName)">{{ scope }}</li>
+                        </ul>
+                    </td>
+                    <td class="col-price td-center">₹ {{ item.price | number:'1.2-2' }}</td>
+                    <td class="col-qty td-center">{{ item.qty }}</td>
+                    <!-- <td class="col-disc td-center">{{ item.discount }}%</td> -->
+                    <td class="col-total td-right td-bold">
+                        ₹ {{ ((item.price * item.qty) -  item.discount ) | number:'1.2-2' }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- Summary -->
+        <br *ngIf="pageIndex === quotationServicePages.length - 1">
+        <div class="summary-wrapper" *ngIf="pageIndex === quotationServicePages.length - 1">
+            <div class="summary-spacer"></div>
+            <table class="summary-table">
+                <tr class="summary-row">
+                    <td class="summary-label">Sub Total</td>
+                    <td class="summary-value">₹ {{ getSubTotal() }}</td>
+                </tr>
+                <tr class="summary-row">
+                    <td class="summary-label">Total Discount</td>
+                    <td class="summary-value discount-value">− ₹ {{ getDiscountTotal() }}</td>
+                </tr>
+                <tr class="summary-row grand-total-row">
+                    <td class="summary-label grand-label">Grand Total</td>
+                    <td class="summary-value grand-value">₹ {{ getGrandTotal() }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!--  terms and conditions  -->
+    <div class="page pdf-page info-page">
+
+        <div class="page-header-strip">
+            <span class="page-header-brand">Terms</span>
+            <!-- <span class="page-header-title">TERMS &amp; PAYMENT</span> -->
+        </div>
+
+        <!-- Notes -->
+        <!-- <div class="info-section" *ngIf="quotationForm?.value?.notes">
+            <div class="info-section-header">
+                <span class="info-section-icon">📋</span>
+                <h4>Notes</h4>
+            </div>
+            <p class="notes-text">{{ quotationForm.value.notes }}</p>
+        </div> -->
+
+        <!-- Terms & Conditions -->
+        <div class="info-section">
+            <div class="info-section-header">
+                <span class="info-section-icon">📄</span>
+                <h4>Terms</h4>
+            </div>
+            <ul class="terms-list">
+                <li>This quotation is valid for <strong>10 days only</strong> from the date of issue.</li>
+                <li>Applicable taxes will be charged extra as per government rules.</li>
+                <li>Work duration depends on timely document submission from the client,
+                    accuracy of information, government portal availability, and department approval.</li>
+                <li>BizRegistro Services LLP acts as a professional consultancy/service provider and
+                    does not represent itself as a government authority.</li>
+            </ul>
+        </div>
+
+        <!-- Bank Details -->
+        <div class="info-section">
+            <div class="info-section-header">
+                <span class="info-section-icon">🏦</span>
+                <h4>Payment Information</h4>
+            </div>
+            <table class="bank-table">
+                <tr>
+                    <td class="bank-key">Account Name</td>
+                    <td class="bank-val">BizRegistro Services LLP</td>
+                </tr>
+                <tr>
+                    <td class="bank-key">Bank Name</td>
+                    <td class="bank-val">Canara Bank</td>
+                </tr>
+                <tr>
+                    <td class="bank-key">Account Number</td>
+                    <td class="bank-val">120037837292</td>
+                </tr>
+                <tr>
+                    <td class="bank-key">IFSC Code</td>
+                    <td class="bank-val">CNRB0015332</td>
+                </tr>
+                <tr>
+                    <td class="bank-key">Account Type</td>
+                    <td class="bank-val">Current Account</td>
+                </tr>
+                <tr>
+                    <td class="bank-key">UPI ID</td>
+                    <!-- <td class="bank-val">bizregistro&#64;canara</td> -->
+                    <td class="bank-val">335865886837292&#64;cnrb</td>
+                </tr>
+            </table>
+            <div class="payment-qr-wrapper">
+                <img
+                    src="/img/Biz_QRcode.webp"
+                    alt="Payment QR"
+                    class="payment-qr-image"
+                />
+            </div>
+        </div>
+
+        <!-- Quote Banner -->
+        <div class="cover-quote-banner">
+            <p class="cover-quote-text">
+                "Register smart. Start faster. Grow with confidence."
+            </p>
+            <p class="cover-quote-sub">Let's build your business today!</p>
+        </div>
+        <!-- Footer Thank You -->
+        <div class="thankyou-banner">
+            <p>Thank you for choosing <strong>BizRegistro</strong> — Maharashtra's No. 1 Trusted Business License
+                Provider!</p>
+        </div>
+    </div>
+</div>

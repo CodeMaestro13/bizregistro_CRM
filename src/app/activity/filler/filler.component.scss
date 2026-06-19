@@ -1,0 +1,13 @@
+::ng-deep .search-option {
+  height: auto !important;
+  padding: 8px 12px !important;
+}
+
+::ng-deep .search-option input {
+  color: black;
+}
+
+::ng-deep .search-option input::placeholder {
+  color: #888;
+  opacity: 1;
+}

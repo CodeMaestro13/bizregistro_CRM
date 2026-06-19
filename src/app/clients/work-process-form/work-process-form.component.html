@@ -1,0 +1,68 @@
+<!-- <p>work-process-form works!</p> -->
+<div class="ed-overlay" *ngIf="visible">
+	<div class="ed-modal">
+		<header class="ed-header">
+			<h3>Update Work Progress for {{ viewData?.name  }}</h3>
+			<button mat-icon-button (click)="cancel()" aria-label="close">
+				<mat-icon>close</mat-icon>
+			</button>
+		</header>
+
+		<form [formGroup]="form" class="ed-form" style="gap: 10px;padding-bottom: 0px;">
+
+            <div class="ed-row">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Work Status</mat-label>
+                    <mat-select formControlName="work_status_id">
+                        <mat-option *ngFor="let s of work_status" [value]="s.id">{{ s.name }}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('work_status_id')?.hasError('required')">Select at least one Status</mat-error>
+                </mat-form-field>
+            </div>
+
+			<div class="ed-row">
+				<mat-form-field appearance="outline" class="full">
+					<mat-label>Note</mat-label>
+					<textarea matInput formControlName="note"></textarea>
+                    <mat-error *ngIf="form.get('note')?.hasError('required')">Note is required</mat-error>
+                    <mat-error *ngIf="form.get('note')?.hasError('minlength')">Note must be at least 3 characters long</mat-error>
+				</mat-form-field>
+			</div>
+            
+
+			<footer class="ed-footer" style="display: flex; margin-top:0px;padding: 0px 16px 0px;">
+				<button mat-stroked-button type="button" color="warn" (click)="cancel()">Cancel</button>
+				<button mat-flat-button color="primary" type="button" (click)="save()">Save</button>
+			</footer>
+		</form>
+        <div class="reports-table table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="fw-semibold main-color d-flex align-items-center justify-content-center">SN</th>
+                        <th class="fw-semibold gray-color">Status</th>
+                        <th class="fw-semibold gray-color">Note</th>
+                        <th class="fw-semibold gray-color">Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let work of workData; let i = index">
+                        <td class="fw-semibold d-flex align-items-center justify-content-center">{{ i + 1 }}</td>
+                        <td class="gray-color fw-semibold">
+                            <div class="d-flex align-items-center justify-content-center">
+                                {{ work?.adName }} - {{ work.workStatusName || work.work_status_id }}
+                            </div>
+                        </td>
+                        <td class="gray-color fw-semibold">
+                            {{ work.note || '—' }}
+                        </td>
+                        <td><span class="fw-semibold">{{ work.added_at || work.created_at }}</span></td>
+                    </tr>
+                    <tr *ngIf="!workData || workData.length === 0">
+                        <td colspan="4" class="text-center">No work history available</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+	</div>
+</div>

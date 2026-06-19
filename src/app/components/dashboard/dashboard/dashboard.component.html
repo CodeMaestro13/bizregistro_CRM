@@ -1,0 +1,216 @@
+<div class="row" [class.component-dark-theme]="themeService.isDark()">
+    <ng-container *ngIf="adminData.admin_id == 1">
+        <div class="col-md-12">
+            <!-- Show bde today Activity bar chart -->
+            <app-lead-activity-chart />
+        </div>
+    </ng-container>
+
+    
+    <div class="col-md-12" *ngIf="adminData.admin_id != 1 && adminData.type == 1">
+        <mat-card class="tagus-card mb-25 pt-25">
+            <mat-card-header style="justify-content: center;">
+                <h2 class="centerText"
+                    style="font-size: 20px; font-weight: 500;display: flex; justify-content: center; align-items: center;">
+                    <i class="ri-user-2-line"></i>{{ adminData?.name }} - Performance Report
+                </h2>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="row stats-grid">
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <div class="stat-card hover-effect">
+                            <div class="stat-top">
+                                <div class="stat-icon bg1"><i class="ri-sun-line"></i></div>
+                                <div class="stat-meta">
+                                    <div class="stat-title">Today</div>
+                                    <div class="stat-value"> <small class="stat-title">Conveted: </small>
+                                        {{data?.today?.converted || 0}}</div>
+                                </div>
+                            </div>
+                            <div class="stat-bottom">
+                                <div class="handled">Handled: <strong>{{data?.today?.LeadCount || 0}}</strong></div>
+                                <mat-progress-bar mode="determinate" color="primary"
+                                    [value]="((data?.today?.converted || 0) / (data?.today?.LeadCount || 1)) * 100"></mat-progress-bar>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <div class="stat-card">
+                            <div class="stat-top">
+                                <div class="stat-icon bg2"><i class="ri-calendar-2-line"></i></div>
+                                <div class="stat-meta">
+                                    <div class="stat-title">Weekly</div>
+                                    <div class="stat-value"><small class="stat-title">Conveted: </small>
+                                        {{data?.week?.converted || 0}}</div>
+                                </div>
+                            </div>
+                            <div class="stat-bottom">
+                                <div class="handled">Handled: <strong>{{data?.week?.LeadCount || 0}}</strong></div>
+                                <mat-progress-bar mode="determinate" color="accent"
+                                    [value]="((data?.week?.converted || 0) / (data?.week?.LeadCount || 1)) * 100"></mat-progress-bar>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <div class="stat-card">
+                            <div class="stat-top">
+                                <div class="stat-icon bg3"><i class="ri-calendar-event-line"></i></div>
+                                <div class="stat-meta">
+                                    <div class="stat-title">Monthly</div>
+                                    <div class="stat-value"><small class="stat-title">Conveted: </small>
+                                        {{data?.monthly?.converted || 0}}</div>
+                                </div>
+                            </div>
+                            <div class="stat-bottom">
+                                <div class="handled">Handled: <strong>{{data?.monthly?.LeadCount || 0}}</strong>
+                                </div>
+                                <mat-progress-bar mode="determinate" color="warn"
+                                    [value]="((data?.monthly?.converted || 0) / (data?.monthly?.LeadCount || 1)) * 100"></mat-progress-bar>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <div class="stat-card">
+                            <div class="stat-top">
+                                <div class="stat-icon bg4"><i class="ri-bar-chart-line"></i></div>
+                                <div class="stat-meta">
+                                    <div class="stat-title">Yearly</div>
+                                    <div class="stat-value"><small class="stat-title">Conveted: </small>
+                                        {{data?.yearly?.converted || 0}}</div>
+                                </div>
+                            </div>
+                            <div class="stat-bottom">
+                                <div class="handled">Handled: <strong>{{data?.yearly?.LeadCount || 0}}</strong>
+                                </div>
+                                <mat-progress-bar mode="determinate" color="primary"
+                                    [value]="((data?.yearly?.converted || 0) / (data?.yearly?.LeadCount || 1)) * 100"></mat-progress-bar>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="col-md-5" *ngIf="adminData.type == 1 || adminData.deleteLead == 1 || adminData.admin_id == 5" >
+        <mat-card class="tagus-card mb-25 pt-25">
+            <mat-card-header style="justify-content: center;">
+                <h2 class="centerText"
+                    style="font-size: 20px; font-weight: 500;display: flex; justify-content: center; align-items: center;">
+                    <i class="ri-team-line"></i> &nbsp;New Leads&nbsp; <button routerLink="leads" mat-mini-fab
+                        color="primary" style="width: 40px;height: 26px;border-radius: 10px;"><i
+                            class="ri-eye-line"></i></button>
+                    <!-- <span style="font-size: 14px; color: gray;">(Last 10 Days)</span> -->
+                </h2>
+            </mat-card-header>
+            <!-- here we have show responsive table -->
+            <mat-card-content>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Mobile</th>
+                                <th scope="col">City</th>
+                                <th scope="col">Added&nbsp;On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngIf="newLeads?.length > 0; else noLeads">
+
+                                <tr *ngFor="let item of newLeads">
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.mobile }}</td>
+                                    <td>{{ item.city }}</td>
+                                    <td>{{ item.added_on }}</td>
+                                </tr>
+                            </ng-container>
+                            <ng-template #noLeads>
+                                <tr>
+                                    <td colspan="4" class="text-center">No new leads found.</td>
+                                </tr>
+                            </ng-template>
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="col-md-7" *ngIf="adminData.type == 1 || adminData.deleteLead == 1 || adminData.admin_id == 5">
+        <mat-card class="tagus-card mb-25 pt-25">
+            <mat-card-header style="justify-content: center;">
+                <h2 class="centerText"
+                    style="font-size: 20px; font-weight: 500;display: flex; justify-content: center; align-items: center;">
+                    <i class="ri-pie-chart-line"></i> &nbsp; Daily Lead Ownership Summary
+                </h2>
+            </mat-card-header>
+            <mat-card-content>
+                <ng-container *ngIf="query.length > 0;else noData">
+                    <div class="chart">
+                        <apx-chart [series]="chartOptions.series!" [legend]="chartOptions.legend!"
+                            [chart]="chartOptions.chart!" [labels]="chartOptions.labels!"
+                            [grid]="chartOptions.grid!" [fill]="chartOptions.fill!" [stroke]="chartOptions.stroke!"
+                            [responsive]="chartOptions.responsive!"></apx-chart>
+                    </div>
+                </ng-container>
+                <ng-template #noData>
+                    <div class="no-data">
+                        <i class="ri-emotion-sad-line" style="font-size: 48px; color: gray;"></i>
+                        <p style="font-size: 16px; color: gray;">No data available to display.</p>
+                    </div>
+                </ng-template>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="col-md-7" *ngIf="adminData.type == 2 || adminData.deleteLead == 1 || adminData.admin_id == 5">
+        <app-filler-graph [graphData]="data"></app-filler-graph>
+    </div>
+    <div class="col-md-5" *ngIf="adminData.type == 2 || adminData.deleteLead == 1 || adminData.admin_id == 5">
+        <mat-card class="tagus-card mb-25 pt-25">
+            <mat-card-header style="justify-content: center;">
+                <h2 class="centerText"
+                    style="font-size: 20px; font-weight: 500;display: flex; justify-content: center; align-items: center;">
+                    <i class="ri-team-line"></i> &nbsp;New Clients&nbsp; <button routerLink="clients" mat-mini-fab
+                        color="primary" style="width: 40px;height: 26px;border-radius: 10px;"><i
+                            class="ri-eye-line"></i></button>
+                    <!-- <span style="font-size: 14px; color: gray;">(Last 10 Days)</span> -->
+                </h2>
+            </mat-card-header>
+            <!-- here we have show responsive table -->
+            <mat-card-content>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Mobile</th>
+                                <th scope="col">City</th>
+                                <th scope="col">Added&nbsp;On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngIf="data?.new_clients?.length > 0; else noLeads">
+
+                                <tr *ngFor="let item of data?.new_clients">
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.mobile }}</td>
+                                    <td>{{ item.city }}</td>
+                                    <td>{{ item.added_on }}</td>
+                                </tr>
+                            </ng-container>
+                            <ng-template #noLeads>
+                                <tr>
+                                    <td colspan="4" class="text-center">No new C;ients found.</td>
+                                </tr>
+                            </ng-template>
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+</div>

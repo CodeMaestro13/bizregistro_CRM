@@ -1,0 +1,98 @@
+<p>get-csv works!</p>
+<div class="dt-modal-overlay">
+    <div class="dt-modal-box">
+
+        <div class="dt-modal-header">
+            <h3 class="dt-modal-title">#Get CSV</h3>
+            <span (click)="onClose()" class="dt-modal-close">&times;</span>
+        </div>
+
+        <div class="dt-modal-body">
+            <form [formGroup]="csvForm" (ngSubmit)="getCsv()">
+                <div class="row">
+
+                    <!-- Status -->
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>Status
+                                <span style="color:red; font-size:0.8em;" 
+                                        *ngIf="csvForm.get('status')?.hasError('required')">
+                                    Required
+                                </span>    
+                            </mat-label>
+                            <mat-select multiple formControlName="status">
+                                <mat-option *ngFor="let status of statusList"
+                                    [value]="status.status_id">{{status.name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    
+
+                    
+
+                    <!-- Status -->
+                    <!-- <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>Service
+                                <span style="color:red; font-size:0.8em;" 
+                                        *ngIf="csvForm.get('services')?.hasError('required')">
+                                    Required
+                                </span>    
+                            </mat-label>
+                            <mat-select multiple formControlName="services">
+                                <mat-option *ngFor="let service of services"
+                                    [value]="service.sId">{{service.sName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div> -->
+
+                    <!-- Status -->
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>BDE
+                                <span style="color:red; font-size:0.8em;" 
+                                        *ngIf="csvForm.get('bde')?.hasError('required')">
+                                    Required
+                                </span>    
+                            </mat-label>
+                            <mat-select multiple formControlName="bde">
+                                <mat-option *ngFor="let bde of bdeList | async"
+                                    [value]="bde.aId">{{bde.aName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- next call date -->
+                    <div class="form-row col-12 mb-2">
+                        <label class="form-label"> Next Call Date 
+                            <span style="color:red; font-size:0.8em;" 
+                                    *ngIf="csvForm.get('start_date')?.hasError('required')">
+                                Required
+                            </span>
+                        </label>
+
+                        <input formControlName="start_date" class="input-control" name="start_date" type="date" />
+                    </div>
+
+                    <!-- next call date -->
+                    <div class="form-row col-12 mb-2">
+                        <label class="form-label"> Next Call Date 
+                            <span style="color:red; font-size:0.8em;" 
+                                    *ngIf="csvForm.get('end_date')?.hasError('required')">
+                                Required
+                            </span>
+                        </label>
+
+                        <input formControlName="end_date" class="input-control" name="end_date" type="date" />
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="form-actions col-12 mb-2">
+                        <button type="submit" class="btn-save">Save</button>
+                        <button type="button" class="btn-cancel" (click)="onClose()">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

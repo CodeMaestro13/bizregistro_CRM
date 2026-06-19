@@ -1,0 +1,58 @@
+<div *ngIf="isOffline" class="offline-popup">
+    <div class="popup-content">
+        <p>⚠️ You are offline now! ⚠️</p>
+    </div>
+</div>
+
+<header class="header-area bg-white border-bottom-radius box-shadow" style="display: flex;justify-content: flex-end;"
+    [class.component-dark-theme]="themeService.isDark()" [class.right-sidebar]="themeService.isRightSidebar()"
+    [class.hide-sidebar]="themeService.isHideSidebar()" [class.dark-header]="themeService.isHeaderDark()"
+    [class.card-borderd-theme]="themeService.isCardBorder()"
+    [class.card-border-radius]="themeService.isCardBorderRadius()" [class.rtl-enabled]="themeService.isRTLEnabled()"
+    [ngClass]="{'active': isToggled}">
+    <div class="d-md-flex align-items-center justify-content-space-between">
+
+        <ul class="header-right-side d-flex align-items-center mt-0 mb-0">
+            <li>
+                <div class="header-left-side d-flex align-items-center">
+                    <div class="burger-menu" (click)="toggle()" [ngClass]="{'active': isToggled}">
+                        <span class="top-bar"></span>
+                        <span class="middle-bar"></span>
+                        <span class="bottom-bar"></span>
+                    </div>
+                </div>
+                <!-- <button mat-flat-button>
+                    <i class="flaticon-timer"></i> Clock In
+                </button> -->
+            </li>
+            <li class="d-none d-lg-block">
+                <div class="date-btn main-color fw-semibold position-relative">
+                    <i class="flaticon-calendar"></i> {{ currentDate | date: 'dd MMMM yyyy' }}
+                </div>
+            </li>
+            <li>
+                <button mat-icon-button (dblclick)="updateImage()" [matMenuTriggerFor]="profileMenu"
+                    class="profile-btn main-color border-none bg-transparent position-relative">
+                    <img [src]="data?.image ?? 'img/icon/avatar2.png'" class="rounded-circle" alt="admin">
+                    Biz-BD
+                    <span class="fw-semibold">{{ data.name }}</span>
+                </button>
+                <mat-menu class="profile-menu-dropdown" #profileMenu="matMenu" xPosition="before">
+                    <ul class="m-0">
+                        <li>
+                            <a (click)="logout()">
+                                <i class="ri-shut-down-line"></i> Logout
+                            </a>
+                        </li>
+                        <!-- <li>
+                            <a (click)="updateImage()">
+                                <i class="ri-shut-down-line"></i> Update Profile Image
+                            </a>
+                        </li> -->
+                    </ul>
+                </mat-menu>
+            </li>
+        </ul>
+    </div>
+</header>
+<div class="yt-loader" *ngIf="loading$ | async"></div>

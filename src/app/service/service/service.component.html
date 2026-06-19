@@ -1,0 +1,71 @@
+<!-- <p>service works!</p> -->
+<div class="breadcrumb-card mb-15 mt-25 d-md-flex align-items-center justify-content-space-between">
+    <h5 class="mb-0">Services
+        <button mat-mini-fab matTooltip="Add" (click)="addVisible = true" style="margin-right:10px;border-radius: 10px;" class="tagus" aria-label="Edit">
+            <mat-icon>add</mat-icon>
+        </button>
+    </h5>
+    <ol class="breadcrumb mb-0 ps-0">
+        <li class="breadcrumb-item">
+            <a routerLink="/">
+                <i class="ri-home-8-line"></i>
+                Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item fw-semibold">Services</li>
+    </ol>
+</div>
+
+
+
+<div class="row">
+    <div class="col-lg-12 col-xxl-12">
+        <mat-card class="mb-25 tagus-card" [class.component-dark-theme]="themeService.isDark()"
+            [class.component-rtl-enabled]="themeService.isRTLEnabled()">
+            <mat-card-content>
+                <div class="reports-table table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="fw-semibold text-muted" style="width:48px">#</th>
+                                <th class="fw-semibold">Name</th>
+                                <th class="fw-semibold text-muted">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr *ngFor="let item of serviceList; let i = index">
+                                <td class="text-muted">{{ i + 1 }}</td>
+
+                                <td>
+                                    <div>
+                                        <div class="fw-semibold"
+                                            style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                            {{ item.servicesName }}</div>
+                                    </div>
+                                </td>
+                                
+                                <td style="width: 135px;text-wrap: auto;">
+                                    <div class="text-muted">{{ item.created_at | date:'medium' }}</div>
+                                    <div class="d-inline-flex align-items-center">
+                                        <button mat-mini-fab matTooltip="Edit" (click)="editData = item;editvisible = true" style="margin-right:10px;border-radius: 10px;" class="tagus" aria-label="Edit">
+                                            <mat-icon>edit</mat-icon>
+                                        </button>
+                                        <button mat-mini-fab style="border-radius: 10px;" (click)="toggleService(item)"
+                                            matTooltip="{{item.webShow == 1 ? 'Activate' : 'Deactivate'}}"
+                                            [ngStyle]="{'background-color': item.webShow == 1 ? 'green' :  'red', 'color':'#fff'}" aria-label="toggle">
+                                            <mat-icon>swap_horiz</mat-icon>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+
+<app-add *ngIf="addVisible" [visible]="addVisible" (closep)="closeAdd($event)" ></app-add>
+<app-edit *ngIf="editvisible" [visible]="editvisible" [data]="editData" (closep)="closeedit($event)" ></app-edit>

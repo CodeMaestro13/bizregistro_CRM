@@ -1,0 +1,423 @@
+.receipts {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+
+  // Filter form styling
+  form {
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+    //   gap: 15px;
+      align-items: flex-end;
+      margin-bottom: 15px;
+
+      [class*="col-"] {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+
+    .tagus-form-group {
+      width: 100%;
+      margin-bottom: 0;
+
+      mat-form-field {
+        width: 100%;
+
+        ::ng-deep {
+          .mat-mdc-form-field-focus-overlay {
+            background-color: rgba(33, 150, 243, 0.05);
+          }
+        }
+      }
+    }
+
+    .button-status {
+      min-width: 100px !important;
+    //   height: 40px !important;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+
+      &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+      }
+    }
+  }
+
+  // Table container
+  mat-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    mat-card-content {
+      padding: 20px;
+    }
+  }
+
+  // Table styling
+.reports-table {
+  overflow-x: auto;
+  border-radius: 8px;
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    margin-bottom: 0;
+
+    thead {
+      background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+
+      tr th {
+        padding: 16px 12px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 13px;
+        color: currentColor;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        border: none !important;
+        white-space: nowrap;
+
+        &.text-muted {
+          color: currentColor !important;
+        }
+
+        &.fw-semibold {
+          font-weight: 700;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid #eceff1;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: #f5f9fc;
+          box-shadow: inset 0 1px 3px rgba(33, 150, 243, 0.1);
+        }
+
+        &.total-row {
+          background: linear-gradient(135deg, #f0f8ff 0%, #e3f2fd 100%);
+          font-weight: 700;
+          border-top: 2px solid #2196f3;
+          border-bottom: 2px solid #2196f3;
+
+          td {
+            padding: 14px 12px;
+            background: transparent;
+            color: #1976d2;
+          }
+        }
+
+        td {
+          padding: 14px 12px;
+          text-align: center;
+          font-size: 15px;
+          vertical-align: middle;
+          border: none !important;
+          color: #555;
+
+          &:first-child {
+            font-weight: 600;
+            color: #2196f3;
+            width: 48px;
+          }
+
+          .fw-semibold {
+            font-weight: 700;
+            color: #1565c0;
+            margin-bottom: 4px;
+          }
+
+          .medium {
+            font-size: 16px;
+            color: #888;
+            margin: 4px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+
+            i {
+              color: #2196f3;
+              font-size: 16px;
+            }
+
+            span {
+              word-break: break-word;
+            }
+          }
+
+          .text-muted {
+            color: #999;
+            font-size: 14px;
+
+            &.border-bottom {
+              padding-bottom: 8px;
+              border-bottom: 1px solid #eceff1 !important;
+            }
+          }
+
+          .text-danger {
+            color: #d32f2f;
+            font-weight: 500;
+
+            &.small {
+              font-size: 13px;
+            }
+          }
+
+          .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            background: #f5f5f5;
+            color: #777;
+            font-weight: 600;
+
+            &.bg-light {
+              background: #f5f5f5 !important;
+
+              &.text-muted {
+                color: #777 !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+  // Pagination styling
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 30px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      width: 100%;
+
+      .pagination-btn {
+        padding: 10px 16px;
+        border: 2px solid #2196f3;
+        background: white;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        color: #2196f3;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 100px;
+        justify-content: center;
+
+        i {
+          font-size: 16px;
+        }
+
+        &:hover:not(:disabled) {
+          background: #2196f3;
+          color: white;
+          box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+          transform: translateY(-2px);
+        }
+
+        &:active:not(:disabled) {
+          transform: translateY(0);
+        }
+
+        &:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+          color: #ccc;
+          border-color: #ccc;
+        }
+      }
+
+      .pagination-info {
+        min-width: 150px;
+        text-align: center;
+        font-weight: 700;
+        color: #1976d2;
+        font-size: 14px;
+        letter-spacing: 0.3px;
+      }
+    }
+  }
+
+  // Responsive behavior
+  @media (max-width: 1200px) {
+    form {
+      .row {
+        gap: 12px;
+
+        [class*="col-"] {
+          flex: 1 1 calc(50% - 6px);
+          min-width: 200px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 12px;
+
+    form {
+      .row {
+        gap: 10px;
+
+        [class*="col-"] {
+          flex: 1 1 100%;
+          min-width: unset;
+        }
+
+        .d-flex {
+          flex-direction: column !important;
+
+          button {
+            width: 100% !important;
+            margin: 6px 0 !important;
+          }
+        }
+      }
+    }
+
+    .reports-table {
+      .table {
+        font-size: 12px;
+
+        thead tr th {
+          padding: 12px 8px;
+          font-size: 11px;
+        }
+
+        tbody tr {
+          &.total-row td {
+            padding: 10px 8px;
+          }
+
+          td {
+            padding: 10px 8px;
+            font-size: 12px;
+
+            .medium {
+              font-size: 16px !important;
+              gap: 4px;
+
+              i {
+                font-size: 12px;
+              }
+            }
+
+            .text-muted {
+              font-size: 11px;
+            }
+
+            .badge {
+              font-size: 9px;
+              padding: 2px 6px;
+            }
+          }
+        }
+      }
+    }
+
+    .pagination-container {
+      margin: 20px 0;
+      padding: 15px;
+
+      .pagination {
+        gap: 10px;
+        flex-wrap: wrap;
+
+        .pagination-btn {
+          padding: 8px 12px;
+          font-size: 12px;
+          min-width: 80px;
+
+          i {
+            font-size: 14px;
+          }
+        }
+
+        .pagination-info {
+          min-width: 100%;
+          font-size: 12px;
+          margin-top: 10px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .reports-table {
+      .table {
+        font-size: 11px;
+
+        thead tr th {
+          padding: 10px 6px;
+          font-size: 10px;
+        }
+
+        tbody tr td {
+          padding: 8px 6px;
+          font-size: 11px;
+
+          .medium {
+            font-size: 10px;
+            flex-direction: column;
+            gap: 2px;
+          }
+
+          .text-muted {
+            font-size: 10px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Global table styling overrides
+.border-bottom {
+  border-bottom: 1px solid #eceff1 !important;
+}
+
+tr th,
+td {
+  border: 1px solid #eceff1 !important;
+  border-bottom: 1px solid #eceff1 !important;
+}

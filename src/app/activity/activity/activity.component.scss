@@ -1,0 +1,14 @@
+.badge{
+    font-size: 12px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.badge-primary{
+    background-color: #7eaee0;
+    transition: all 0.3s ease;
+}
+
+.badge-primary:active, .badge-primary:focus, .badge-primary:hover{
+    background-color: #007bff;
+}

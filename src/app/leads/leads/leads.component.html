@@ -1,0 +1,329 @@
+<div class="breadcrumb-card mb-15 mt-25 d-md-flex align-items-center justify-content-space-between">
+    <h5 class="mb-0">Leads
+        <button mat-raised-button extended (click)="openAddNewLead()" class="button-status" color="primary"> <i class="ri-user-add-line"></i> Add</button>
+        <button mat-raised-button extended (click)="getCSVLeads()" class="button-status" style="margin-left:10px;" color="success"> <i class="ri-user-add-line"></i> Get Leads</button>
+    </h5>
+    <ol class="breadcrumb mb-0 ps-0">
+        <li class="breadcrumb-item">
+            <a routerLink="/">
+                <i class="ri-home-8-line"></i>
+                Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item fw-semibold">Leads</li>
+    </ol>
+</div>
+
+<mat-card class="mb-25 tagus-card">
+    <!-- <mat-card-header>
+        <h5 class="mb-0">Textual Inputs</h5>
+    </mat-card-header> -->
+    <mat-card-content>
+        <form [formGroup]="leadfilter" (ngSubmit)="getLeads()">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-4">
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>Service</mat-label>
+                            <mat-select multiple formControlName="service">
+                                <!-- <mat-option value="">-- Select Status --</mat-option> -->
+                                <mat-option *ngFor="let service of services"
+                                    [value]="service.sId">{{service.sName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-4">
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>Status</mat-label>
+                            <mat-select formControlName="status">
+                                <mat-option value="2d">Today's Follow Up</mat-option>
+                                <mat-option *ngFor="let service of statusList"
+                                    [value]="service.status_id">{{service.name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-4">
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>Campaign</mat-label>
+                            <mat-select formControlName="campaign">
+                                <!-- <mat-option value="">-- Select Campaign --</mat-option> -->
+                                <mat-option *ngFor="let campaign of campaignList"
+                                    [value]="campaign?.campaign">{{campaign?.campaign}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-3 col-sm-4">
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>Source</mat-label>
+                            <mat-select formControlName="source">
+                                <!-- <mat-option value="">-- Select Source --</mat-option> -->
+                                <mat-option *ngFor="let source of sourceList"
+                                    [value]="source?.id">{{source?.name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-4">
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>Assigned To</mat-label>
+                            <mat-select formControlName="assignedTo">
+                                <!-- <mat-option value="">-- Select Bde --</mat-option> -->
+                                <mat-option *ngFor="let bde of assignedTo | async"
+                                    [value]="bde.aId">{{bde.aName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-4">
+                    <div class="tagus-form-group without-icon">
+                        <mat-form-field appearance="fill" class="example-full-width">
+                            <mat-label>Select a date range</mat-label>
+                            <mat-date-range-input [rangePicker]="picker">
+                                <input formControlName="dateFrom" matStartDate placeholder="Start date">
+                                <input formControlName="dateTo" matEndDate placeholder="End date">
+                            </mat-date-range-input>
+                            <mat-hint class="mt-0" style="font-size: x-small;">MM/DD/YYYY–MM/DD/YYYY</mat-hint>
+                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-4">
+                    <div class="tagus-form-group without-icon">
+                        <label class="d-none mb-12 fw-semibold gray-color">First Name</label>
+                        <mat-form-field appearance="fill">
+                            <i class="ri-user-3-line"></i>
+                            <mat-label>Enter name</mat-label>
+                            <input matInput formControlName="name" #nameInput2 [matAutocomplete]="names">
+                            <mat-autocomplete #names="matAutocomplete">
+                                <mat-option *ngFor="let name of namelist" [value]="name.name">
+                                    <span>{{name.name}}</span>
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-4">
+                    <div class="tagus-form-group without-icon">
+                        <label class="d-none mb-12 fw-semibold gray-color">Phone</label>
+                        <mat-form-field appearance="fill">
+                            <i class="ri-phone-line"></i>
+                            <mat-label>Enter phone number</mat-label>
+                            <input matInput formControlName="mobile" #mobileInput2 [matAutocomplete]="number">
+                            <mat-autocomplete #number="matAutocomplete">
+                                <mat-option *ngFor="let number of numberList" [value]="number.mobile">
+                                    <span>{{number.mobile}}</span>
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-4">
+                    <div class="tagus-form-group without-icon">
+                        <label class="d-none mb-12 fw-semibold gray-color">Email Address <span>*</span></label>
+                        <mat-form-field appearance="fill">
+                            <i class="ri-mail-line"></i>
+                            <mat-label>Enter email address</mat-label>
+                            <input matInput formControlName="email" #emailInput2 [matAutocomplete]="emails">
+                            <mat-autocomplete #emails="matAutocomplete">
+                                <mat-option *ngFor="let email of emailList" [value]="email.email">
+                                    <span>{{email.email}}</span>
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-12 col-md-12 col-sm-12 d-flex align-items-center justify-content-end mb-5 pb-5">
+                    <button mat-raised-button color="primary" class="button-status me-10">Submit</button>
+                    <button mat-raised-button type="button" color="warn" class="button-status"
+                        (click)="clear();leadfilter.get('status')?.setValue('');">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </mat-card-content>
+    <mat-card-footer class="row d-flex justify-content-start pt-15 pb-15 border-top">
+        <ng-container *ngFor="let status of getCountStatus">
+            
+            <button
+            mat-raised-button
+            (click)="leadfilter.get('status')?.setValue(status.id); pagination('first');"
+            style="width: fit-content !important; margin: 10px; padding: 10px !important; font-weight: 600 !important;"
+            [ngStyle]="{
+                'background-color': leadfilter.get('status')?.value == status.id 
+                ? '#e0e0e0' 
+                : getStatusColor(status.name) ,
+                'color': leadfilter.get('status')?.value == status.id 
+                ? '#000'
+                : '#fff' 
+            }"
+            class="d-block button-status"
+            >
+            {{status.name}}
+            <span class="badge text-bg-dark pills">
+                {{status.count}}
+            </span>
+            </button>
+
+        </ng-container>
+    </mat-card-footer>
+</mat-card>
+
+<div class="row">
+    <div class="col-lg-12 col-xxl-12">
+        <mat-card class="mb-25 tagus-card" [class.component-dark-theme]="themeService.isDark()"
+            [class.component-rtl-enabled]="themeService.isRTLEnabled()">
+            <!-- <mat-card-header>
+                <h5 class="mb-0">Recent Files</h5>
+                <button mat-flat-button class="default-btn tagus">
+                    <i class="ri-add-fill"></i> Create File
+                </button>
+            </mat-card-header> -->
+            <mat-card-content>
+                <div class="recent-files-table table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="fw-semibold main-color">#</th>
+                                <th class="fw-semibold main-color">Customer Details</th>
+                                <th class="fw-semibold gray-color">Handled By/Services</th>
+                                <th class="fw-semibold gray-color">Last Activity</th>
+                                <!-- <th class="fw-semibold gray-color">Actions</th> -->
+                            </tr>
+                        </thead>
+                        <ng-container *ngIf="shopActList?.length > 0;else noData">
+                            <tbody>
+                                <tr *ngFor="let item of shopActList;let i = index">
+                                    <td class="cols">
+                                        {{ i + 1 }}.
+                                    </td>
+                                    <td>
+                                        <div class="name-info align-items-center">
+                                            <h5 class="fw-semibold mb-0 ml-0">
+                                                <span class="break-words">{{ item?.name }}</span>
+                                                <br />
+                                            </h5>
+                                            <span> {{ item?.mobile }} <br /> </span>
+                                            <span *ngIf="item?.email" class="break-words"> {{ item.email }} <br /> </span>
+                                            <!-- item.city -->
+                                            <span *ngIf="item?.city" class="gray-color"> City: {{ item?.city }} <br /> </span>
+                                            <span *ngIf="item?.source" class="break-words gray-color"> Source: {{item?.source}} <ng-container *ngIf="item?.metaType"> ({{item.metaType == 'ig' ? 'Instagram' : item.metaType == 'fb' ? 'Facebook' : ''}}) </ng-container></span>
+                                            <span *ngIf="item?.mCam" class="break-words gray-color"><br/>CMP:- {{item.mCam}}</span>
+                                        </div>
+                                    </td>
+                                    <td class="gray-color">
+                                        <div class="name-info align-items-start break-words" >
+                                            <span *ngIf="item?.handled_by" class="fw-semibold text-black">
+                                                {{item.handled_by}} <br />
+                                            </span>
+                                            <span class="break-words"
+                                                *ngFor="let service of serviceArray(item.services);let o = index">{{ service
+                                                + ((serviceArray(item.services).length > 1 && o <
+                                                    serviceArray(item.services).length - 1)? ', ' : '' ) }} 
+                                            </span> 
+                                            <br />
+                                            <span class="break-words" *ngIf="item.otherDet"> 
+                                                {{capitalizeFirstLetterRegex(item.otherDet)}} <br /> 
+                                            </span>
+                                            {{ item.added_on }}
+                                        </div>
+                                    </td>
+                                    <td class="gray-color">
+                                        <span class="fw-semibold"> {{item.statusN}} </span>
+                                        <br />
+                                        <span *ngIf="item.discription" class="break-words">
+                                            {{item.discription}}<br />
+                                            <!-- {{ item| json }} -->
+                                        </span>
+                                        {{ item.last_activity }} <br />
+                                        <div class="d-flex align-items-center justify-content-end mt-2">
+                                            <button mat-mini-fab  (click)="whatsapp(item)"
+                                                style="background-color: green;margin-right:10px;border-radius: 10px;">
+                                                <i class="flaticon-whatsapp"></i>
+                                            </button>
+                                            <button *ngIf="item?.status == 1 && item.discription == '' " (click)="addCallAct(item)" mat-mini-fab
+                                                color="primary" style="margin-right:10px;border-radius: 10px;">
+                                                <mat-icon>call</mat-icon>
+                                            </button>
+                                            <button mat-mini-fab class="tagus" (click)="addActivity(item)"
+                                                style="margin-right:10px;border-radius: 10px;">
+                                                <mat-icon>edit</mat-icon>
+                                            </button>
+                                            <button mat-mini-fab *ngIf="bdedet.deleteLead != 0" (click)="deleteLead(item)" color="warn" class="ml-2"
+                                                style="border-radius: 10px;">
+                                                <mat-icon>delete</mat-icon>
+                                            </button>
+
+                                            <button mat-mini-fab class="tagus" (click)="openAddQuotation(item)" color="info" class="ml-2"
+                                                style="border-radius: 10px; margin-left:10px;">
+                                                <i class="flaticon-plus"></i>
+                                            </button>
+                                        </div>
+                                        <div *ngIf="item.isRepeatedLead" class="alert alert-warning mt-2">
+                                            <i class="ri-error-warning-line"></i>repeated lead.
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </ng-container>
+                        <ng-template #noData>
+                            <tbody>
+                                <tr>
+                                    <td colspan="4" class="text-center gray-color">
+                                        No data found
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </ng-template>
+                    </table>
+                </div>
+                <div *ngIf="ttlPage > 1" class="row col-md-12">
+                    <nav style="display: flex;justify-content: center;" aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0);" (click)="pagination('first')" aria-label="Previous">
+                                    <span aria-hidden="true">First</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0);" (click)="pagination('privious')">Previous</a>
+                            </li>
+                            <li class="page-item" style="padding: 0px 5px !important;">
+                                <!-- <input type="number" value="{{pageNo}}" #pageInput style="height:100%;box-sizing: border-box !important;padding:auto 10px;"> -->
+                                <a class="page-link" href="javascript:void(0);">{{leadfilter.get('page')?.value ?? 1 }}</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0);" (click)="pagination('next')">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0);" (click)="pagination('last')" aria-label="Next">
+                                    <span aria-hidden="true">Last</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+<app-add-activity *ngIf="actTab" [data]="actData" [statusList]="statusList" [services]="services" (closep)="closepage($event)"></app-add-activity>
+<app-add-new-lead  *ngIf="addNewLead" [statusList]="statusList" [services]="services" (closedp)="closedAddNewLead($event)" ></app-add-new-lead>
+<app-get-csv *ngIf="csvForm" [statusList]="statusList" [services]="services" (closep)="closed($event)"></app-get-csv>
+<app-add-quotation *ngIf="showQutationModal" [data]="selectedLead" [services]="services" (closep)="onQutationClosed($event)"></app-add-quotation>
