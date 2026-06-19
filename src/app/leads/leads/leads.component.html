@@ -209,7 +209,8 @@
                         </thead>
                         <ng-container *ngIf="shopActList?.length > 0;else noData">
                             <tbody>
-                                <tr *ngFor="let item of shopActList;let i = index">
+                                <tr *ngFor="let item of shopActList;let i = index" class="lead-row" role="button" tabindex="0"
+                                    (click)="openLeadDetails(item)" (keydown.enter)="openLeadDetails(item)">
                                     <td class="cols">
                                         {{ i + 1 }}.
                                     </td>
@@ -253,24 +254,24 @@
                                         </span>
                                         {{ item.last_activity }} <br />
                                         <div class="d-flex align-items-center justify-content-end mt-2">
-                                            <button mat-mini-fab  (click)="whatsapp(item)"
+                                            <button mat-mini-fab  (click)="$event.stopPropagation(); whatsapp(item)"
                                                 style="background-color: green;margin-right:10px;border-radius: 10px;">
                                                 <i class="flaticon-whatsapp"></i>
                                             </button>
-                                            <button *ngIf="item?.status == 1 && item.discription == '' " (click)="addCallAct(item)" mat-mini-fab
+                                            <button *ngIf="item?.status == 1 && item.discription == '' " (click)="$event.stopPropagation(); addCallAct(item)" mat-mini-fab
                                                 color="primary" style="margin-right:10px;border-radius: 10px;">
                                                 <mat-icon>call</mat-icon>
                                             </button>
-                                            <button mat-mini-fab class="tagus" (click)="addActivity(item)"
+                                            <button mat-mini-fab class="tagus" (click)="$event.stopPropagation(); addActivity(item)"
                                                 style="margin-right:10px;border-radius: 10px;">
                                                 <mat-icon>edit</mat-icon>
                                             </button>
-                                            <button mat-mini-fab *ngIf="bdedet.deleteLead != 0" (click)="deleteLead(item)" color="warn" class="ml-2"
+                                            <button mat-mini-fab *ngIf="bdedet.deleteLead != 0" (click)="$event.stopPropagation(); deleteLead(item)" color="warn" class="ml-2"
                                                 style="border-radius: 10px;">
                                                 <mat-icon>delete</mat-icon>
                                             </button>
 
-                                            <button mat-mini-fab class="tagus" (click)="openAddQuotation(item)" color="info" class="ml-2"
+                                            <button mat-mini-fab class="tagus" (click)="$event.stopPropagation(); openAddQuotation(item)" color="info" class="ml-2"
                                                 style="border-radius: 10px; margin-left:10px;">
                                                 <i class="flaticon-plus"></i>
                                             </button>

@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDatepickerModule, MatDateRangeInput } from '@angular/material/datepicker';
@@ -47,7 +47,8 @@ export class LeadsComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private api: AdminsService,
     public dialog: MatDialog,
     public themeService: CustomizerSettingsService,
-    private loader:LoaderService
+    private loader:LoaderService,
+    private router: Router
   ) { }
   toggleTheme() {
     this.themeService.toggleTheme();
@@ -59,6 +60,17 @@ export class LeadsComponent implements OnInit, AfterViewInit, OnDestroy {
   addActivity(item:any){
     this.actData = item;
     this.actTab = true;
+  }
+
+  openLeadDetails(item: any) {
+    const leadId = item?.shopacttblID || item?.id || item?.lead_id;
+
+    if (!leadId) {
+      this.sweetAlert('warning', 'Lead id not found');
+      return;
+    }
+
+    this.router.navigate(['/leads', leadId], { state: { lead: item } });
   }
   closepage(elmt:any) {
     console.log(elmt.closed);

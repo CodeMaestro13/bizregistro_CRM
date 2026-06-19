@@ -45,3 +45,14 @@
     color: white;
     font-size: large;
 }
+
+.lead-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.lead-row:hover,
+.lead-row:focus {
+    background-color: #f8fafc;
+    outline: none;
+}

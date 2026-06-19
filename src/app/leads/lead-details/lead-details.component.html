@@ -1,0 +1,126 @@
+<div class="breadcrumb-card mb-15 mt-25 d-md-flex align-items-center justify-content-space-between">
+    <h5 class="mb-0">Lead Details</h5>
+    <ol class="breadcrumb mb-0 ps-0">
+        <li class="breadcrumb-item">
+            <a routerLink="/">
+                <i class="ri-home-8-line"></i>
+                Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item fw-semibold"><a routerLink="/leads">Leads</a></li>
+        <li class="breadcrumb-item fw-semibold">{{ getDisplay(lead?.name, 'Details') }}</li>
+    </ol>
+</div>
+
+<div class="lead-details-actions mb-15">
+    <button mat-raised-button color="primary" routerLink="/leads">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Leads
+    </button>
+</div>
+
+<mat-card class="mb-25 tagus-card">
+    <mat-card-content>
+        <div class="lead-header">
+            <div>
+                <h3>{{ getDisplay(lead?.name, 'Lead') }}</h3>
+                <p>{{ getDisplay(lead?.mobile) }} <span *ngIf="lead?.email">| {{ lead.email }}</span></p>
+            </div>
+            <span class="status-pill" *ngIf="lead?.statusN || lead?.statusName">{{ lead?.statusN || lead?.statusName }}</span>
+        </div>
+
+        <div class="info-grid">
+            <div>
+                <span>City</span>
+                <strong>{{ getDisplay(lead?.city) }}</strong>
+            </div>
+            <div>
+                <span>Lead Taken By</span>
+                <strong>{{ getLeadTakenBy() }}</strong>
+            </div>
+            <div>
+                <span>Source</span>
+                <strong>{{ getDisplay(lead?.source) }}</strong>
+            </div>
+            <div>
+                <span>Campaign</span>
+                <strong>{{ getDisplay(lead?.mCam || lead?.campaign) }}</strong>
+            </div>
+            <div>
+                <span>Added On</span>
+                <strong>{{ getDisplay(lead?.added_on) }}</strong>
+            </div>
+            <div>
+                <span>Last Activity</span>
+                <strong>{{ getDisplay(lead?.last_activity) }}</strong>
+            </div>
+        </div>
+
+        <div class="service-list" *ngIf="serviceArray(lead?.services || lead?.lservices).length">
+            <span *ngFor="let service of serviceArray(lead?.services || lead?.lservices)">{{ service }}</span>
+        </div>
+
+        <div class="description-block" *ngIf="lead?.discription || lead?.description || lead?.otherDet">
+            <h6>Notes</h6>
+            <p>{{ lead?.discription || lead?.description || lead?.otherDet }}</p>
+        </div>
+    </mat-card-content>
+</mat-card>
+
+<div class="row">
+    <div class="col-lg-7">
+        <mat-card class="mb-25 tagus-card">
+            <mat-card-content>
+                <div class="section-title">
+                    <h5>Activity Log</h5>
+                    <span>{{ activities.length }}</span>
+                </div>
+
+                <ng-container *ngIf="activities.length; else noActivities">
+                    <div class="timeline-item" *ngFor="let activity of activities; let i = index">
+                        <div class="timeline-index">{{ i + 1 }}</div>
+                        <div>
+                            <h6>{{ getDisplay(activity?.statusName || activity?.status) }}</h6>
+                            <p *ngIf="activity?.description">{{ activity.description }}</p>
+                            <small>
+                                {{ getDisplay(activity?.handledBy || activity?.handled_by) }}
+                                <span *ngIf="activity?.added_on">| {{ activity.added_on }}</span>
+                                <span *ngIf="activity?.next_call_date">| Next: {{ activity.next_call_date }}</span>
+                            </small>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <ng-template #noActivities>
+                    <div class="empty-state">No activity added for this lead yet.</div>
+                </ng-template>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div class="col-lg-5">
+        <mat-card class="mb-25 tagus-card">
+            <mat-card-content>
+                <div class="section-title">
+                    <h5>Quotation Sent</h5>
+                    <span>{{ quotations.length }}</span>
+                </div>
+
+                <ng-container *ngIf="quotations.length; else noQuotations">
+                    <div class="quotation-item" *ngFor="let quotation of quotations">
+                        <div>
+                            <h6>{{ getDisplay(quotation?.status, 'Sent') }}</h6>
+                            <small>{{ getDisplay(quotation?.added_on || quotation?.created_at || quotation?.date) }}</small>
+                        </div>
+                        <strong *ngIf="getTotalQuotationAmount(quotation)">₹{{ getTotalQuotationAmount(quotation) }}</strong>
+                        <p *ngIf="quotation?.notes">{{ quotation.notes }}</p>
+                    </div>
+                </ng-container>
+
+                <ng-template #noQuotations>
+                    <div class="empty-state">No quotation record found for this lead.</div>
+                </ng-template>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
