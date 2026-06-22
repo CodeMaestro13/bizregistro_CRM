@@ -48,11 +48,43 @@
 
 .lead-row {
     cursor: pointer;
-    transition: background-color 0.2s ease;
+
+    td {
+        transition: background-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+    }
 }
 
-.lead-row:hover,
-.lead-row:focus {
-    background-color: #f8fafc;
+.recent-files-table table tbody tr.lead-row:hover,
+.recent-files-table table tbody tr.lead-row:focus {
+    --bs-table-bg: #f4fbf6;
+    --bs-table-accent-bg: #f4fbf6;
     outline: none;
+
+    > td {
+        background-color: #f4fbf6 !important;
+    }
+
+    > td:first-child {
+        box-shadow: inset 4px 0 0 #1A4137;
+    }
+
+    > td {
+        border-top-color: #cfe4d8;
+        border-bottom-color: #cfe4d8;
+    }
+
+    h5,
+    h5 .break-words {
+        color: #1A4137;
+    }
+}
+
+.recent-files-table table tbody tr.lead-row:hover > td:last-child,
+.recent-files-table table tbody tr.lead-row:focus > td:last-child {
+    box-shadow: inset -2px 0 0 #88C541;
+}
+
+.lead-row:focus-visible {
+    outline: 2px solid #88C541;
+    outline-offset: -2px;
 }

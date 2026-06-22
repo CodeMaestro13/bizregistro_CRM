@@ -29,6 +29,7 @@
                             <tr>
                                 <th class="fw-semibold text-muted" style="width:48px">#</th>
                                 <th class="fw-semibold">Name</th>
+                                <th class="fw-semibold text-muted">Price</th>
                                 <th class="fw-semibold text-muted">Action</th>
                             </tr>
                         </thead>
@@ -43,6 +44,10 @@
                                             style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                                             {{ item.servicesName }}</div>
                                     </div>
+                                </td>
+
+                                <td class="fw-semibold">
+                                    ₹{{ (item.price || 0) | number:'1.2-2' }}
                                 </td>
                                 
                                 <td style="width: 135px;text-wrap: auto;">

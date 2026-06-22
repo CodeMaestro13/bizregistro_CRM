@@ -17,6 +17,10 @@
         <mat-icon>arrow_back</mat-icon>
         Back to Leads
     </button>
+    <button mat-raised-button color="accent" type="button" (click)="openAddQuotation()" [disabled]="!lead">
+        <mat-icon>picture_as_pdf</mat-icon>
+        Generate Quotation PDF
+    </button>
 </div>
 
 <mat-card class="mb-25 tagus-card">
@@ -56,8 +60,8 @@
             </div>
         </div>
 
-        <div class="service-list" *ngIf="serviceArray(lead?.services || lead?.lservices).length">
-            <span *ngFor="let service of serviceArray(lead?.services || lead?.lservices)">{{ service }}</span>
+        <div class="service-list" *ngIf="getLeadServices().length">
+            <span *ngFor="let service of getLeadServices()">{{ service }}</span>
         </div>
 
         <div class="description-block" *ngIf="lead?.discription || lead?.description || lead?.otherDet">
@@ -107,13 +111,36 @@
                 </div>
 
                 <ng-container *ngIf="quotations.length; else noQuotations">
-                    <div class="quotation-item" *ngFor="let quotation of quotations">
-                        <div>
-                            <h6>{{ getDisplay(quotation?.status, 'Sent') }}</h6>
-                            <small>{{ getDisplay(quotation?.added_on || quotation?.created_at || quotation?.date) }}</small>
+                    <div class="quotation-item" *ngFor="let quotation of quotations; let i = index">
+                        <div class="quotation-item-top">
+                            <span class="quotation-list-number">{{ i + 1 }}</span>
+                            <div class="quotation-title-block">
+                                <h6>{{ getDisplay(quotation?.quotation_no, 'Quotation') }}</h6>
+                                <small>{{ getDisplay(quotation?.sent_at || quotation?.created_at || quotation?.quotation_date) }}</small>
+                            </div>
+                            <span class="quotation-status">{{ getDisplay(quotation?.status, 'Sent') }}</span>
+                        </div>
+                        <div class="quotation-row-header">
+                            <div>
+                                <span>Amount</span>
+                                <strong>₹{{ getMoney(quotation?.total_amount) }}</strong>
+                            </div>
+                            <div>
+                                <span>Created By</span>
+                                <strong>{{ getDisplay(quotation?.created_by_name) }}</strong>
+                            </div>
+                            <div>
+                                <span>Sent At</span>
+                                <strong>{{ getDisplay(quotation?.sent_at) }}</strong>
+                            </div>
+                        </div>
+                        <div class="quotation-item-actions">
+                            <button mat-stroked-button color="primary" type="button" (click)="previewQuotation(quotation)">
+                                <mat-icon>visibility</mat-icon>
+                                Preview
+                            </button>
                         </div>
                         <strong *ngIf="getTotalQuotationAmount(quotation)">₹{{ getTotalQuotationAmount(quotation) }}</strong>
-                        <p *ngIf="quotation?.notes">{{ quotation.notes }}</p>
                     </div>
                 </ng-container>
 
@@ -122,5 +149,223 @@
                 </ng-template>
             </mat-card-content>
         </mat-card>
+    </div>
+</div>
+
+<app-add-quotation
+    *ngIf="showQuotationModal"
+    [data]="selectedLead"
+    [services]="services"
+    (closep)="onQuotationClosed($event)">
+</app-add-quotation>
+
+<div class="quotation-preview-overlay" *ngIf="isQuotationPreviewOpen">
+    <div class="quotation-preview-modal">
+        <div class="quotation-preview-header">
+            <div>
+                <h4>Quotation Preview</h4>
+                <span>{{ getDisplay(quotationPreview?.quotation_no, 'Loading...') }}</span>
+            </div>
+            <div class="quotation-preview-actions">
+                <button
+                    mat-raised-button
+                    color="primary"
+                    type="button"
+                    (click)="downloadQuotationPreview()"
+                    [disabled]="isQuotationPreviewLoading || !quotationPreview || isQuotationDownloading">
+                    <mat-icon>download</mat-icon>
+                    {{ isQuotationDownloading ? 'Downloading...' : 'Download PDF' }}
+                </button>
+                <button mat-icon-button type="button" (click)="closeQuotationPreview()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <div class="quotation-preview-body" *ngIf="!isQuotationPreviewLoading && quotationPreview; else quotationPreviewLoading">
+            <div class="preview-info-grid">
+                <div>
+                    <span>Lead</span>
+                    <strong>{{ getDisplay(quotationPreview?.lead_name) }}</strong>
+                    <small>{{ getDisplay(quotationPreview?.lead_mobile) }}</small>
+                    <small *ngIf="quotationPreview?.lead_email">{{ quotationPreview.lead_email }}</small>
+                </div>
+                <div>
+                    <span>Quotation Date</span>
+                    <strong>{{ getDisplay(quotationPreview?.quotation_date) }}</strong>
+                </div>
+                <div>
+                    <span>Valid Until</span>
+                    <strong>{{ getDisplay(quotationPreview?.valid_until) }}</strong>
+                </div>
+                <div>
+                    <span>Status</span>
+                    <strong>{{ getDisplay(quotationPreview?.status) }}</strong>
+                </div>
+                <div>
+                    <span>Created By</span>
+                    <strong>{{ getDisplay(quotationPreview?.created_by_name) }}</strong>
+                </div>
+            </div>
+
+            <div class="preview-notes" *ngIf="quotationPreview?.notes">
+                <span>Notes</span>
+                <p>{{ quotationPreview.notes }}</p>
+            </div>
+
+            <div class="quotation-items-table table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Qty</th>
+                            <th>Unit Price</th>
+                            <th>Discount</th>
+                            <th>Tax Rate</th>
+                            <th>Tax Amount</th>
+                            <th>Line Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of quotationPreview?.items">
+                            <td>{{ getDisplay(item?.service_name || item?.description) }}</td>
+                            <td>{{ getDisplay(item?.qty) }}</td>
+                            <td>₹{{ getMoney(item?.unit_price) }}</td>
+                            <td>₹{{ getMoney(item?.discount) }}</td>
+                            <td>{{ getDisplay(item?.tax_rate) }}%</td>
+                            <td>₹{{ getMoney(item?.tax_amount) }}</td>
+                            <td class="fw-semibold">₹{{ getMoney(item?.line_total) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="quotation-summary">
+                <div><span>Subtotal</span><strong>₹{{ getMoney(quotationPreview?.subtotal) }}</strong></div>
+                <div><span>Discount</span><strong>₹{{ getMoney(quotationPreview?.discount_amount) }}</strong></div>
+                <div><span>Tax</span><strong>₹{{ getMoney(quotationPreview?.tax_amount) }}</strong></div>
+                <div class="grand-total"><span>Total</span><strong>₹{{ getMoney(quotationPreview?.total_amount) }}</strong></div>
+            </div>
+        </div>
+
+        <ng-template #quotationPreviewLoading>
+            <div class="empty-state">
+                {{ isQuotationPreviewLoading ? 'Loading quotation preview...' : 'Quotation preview not found.' }}
+            </div>
+        </ng-template>
+    </div>
+
+    <div id="quotationHistoryPdf" class="quotation-history-pdf" *ngIf="quotationPreview">
+        <div class="pdf-page">
+            <div class="pdf-cover-header">
+                <div>
+                    <img src="/img/Biz-Logo.webp" class="pdf-logo" alt="BizRegistro Logo" />
+                </div>
+                <div class="pdf-contact">
+                    <div>info&#64;bizregistro.com</div>
+                    <div>+91 97660 90316</div>
+                    <div>www.bizregistro.com</div>
+                </div>
+            </div>
+
+            <div class="pdf-divider"></div>
+            <div class="pdf-title-strip">QUOTATION</div>
+
+            <div class="pdf-bill-section">
+                <div>
+                    <div class="pdf-label">BILL TO</div>
+                    <h3>{{ getDisplay(quotationPreview?.lead_name) }}</h3>
+                    <p>{{ getDisplay(quotationPreview?.lead_mobile) }}</p>
+                    <p>{{ getDisplay(quotationPreview?.lead_email) }}</p>
+                </div>
+                <div class="pdf-meta-box">
+                    <div><span>Quotation No</span><strong>{{ getDisplay(quotationPreview?.quotation_no) }}</strong></div>
+                    <div><span>Date</span><strong>{{ getDisplay(quotationPreview?.quotation_date) }}</strong></div>
+                    <div><span>Valid Until</span><strong>{{ getDisplay(quotationPreview?.valid_until) }}</strong></div>
+                    <div><span>Status</span><strong>{{ getDisplay(quotationPreview?.status) }}</strong></div>
+                </div>
+            </div>
+
+            <table class="pdf-quotation-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Service</th>
+                            <th>Scope of Work</th>
+                            <th>Qty</th>
+                            <th>Price/Rate</th>
+                            <th>Discount</th>
+                            <th>Tax</th>
+                            <th>Total Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of quotationPreview?.items; let i = index">
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ getDisplay(item?.service_name || item?.description) }}</td>
+                        <td>
+                            <ul class="pdf-scope-list">
+                                <li *ngFor="let scope of getScopeOfWork(item?.service_name || item?.description)">{{ scope }}</li>
+                            </ul>
+                        </td>
+                        <td>{{ getDisplay(item?.qty) }}</td>
+                        <td>₹{{ getMoney(item?.unit_price) }}</td>
+                        <td>₹{{ getMoney(item?.discount) }}</td>
+                        <td>₹{{ getMoney(item?.tax_amount) }}</td>
+                        <td>₹{{ getMoney(item?.line_total) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="pdf-summary">
+                <div><span>Sub Total</span><strong>₹{{ getMoney(quotationPreview?.subtotal) }}</strong></div>
+                <div><span>Total Discount</span><strong>₹{{ getMoney(quotationPreview?.discount_amount) }}</strong></div>
+                <div><span>Tax Amount</span><strong>₹{{ getMoney(quotationPreview?.tax_amount) }}</strong></div>
+                <div class="pdf-grand-total"><span>Grand Total</span><strong>₹{{ getMoney(quotationPreview?.total_amount) }}</strong></div>
+            </div>
+
+            <div class="pdf-notes" *ngIf="quotationPreview?.notes">
+                <strong>Notes</strong>
+                <p>{{ quotationPreview.notes }}</p>
+            </div>
+
+            <div class="pdf-footer">
+                Thank you for choosing <strong>BizRegistro</strong>
+            </div>
+        </div>
+
+        <div class="pdf-page">
+            <div class="pdf-title-strip">Terms & Payment</div>
+
+            <div class="pdf-info-section">
+                <h4>Terms</h4>
+                <ul>
+                    <li>This quotation is valid until {{ getDisplay(quotationPreview?.valid_until) }}.</li>
+                    <li>Applicable taxes will be charged as per government rules.</li>
+                    <li>Work duration depends on timely document submission, accurate information, and department approval.</li>
+                    <li>BizRegistro Services LLP acts as a professional consultancy/service provider.</li>
+                </ul>
+            </div>
+
+            <div class="pdf-info-section">
+                <h4>Payment Information</h4>
+                <table class="pdf-bank-table">
+                    <tr><td>Account Name</td><td>BizRegistro Services LLP</td></tr>
+                    <tr><td>Bank Name</td><td>Canara Bank</td></tr>
+                    <tr><td>Account Number</td><td>120037837292</td></tr>
+                    <tr><td>IFSC Code</td><td>CNRB0015332</td></tr>
+                    <tr><td>Account Type</td><td>Current Account</td></tr>
+                    <tr><td>UPI ID</td><td>335865886837292&#64;cnrb</td></tr>
+                </table>
+                <div class="pdf-qr-wrap">
+                    <img src="/img/Biz_QRcode.webp" alt="Payment QR" />
+                </div>
+            </div>
+
+            <div class="pdf-quote-banner">
+                <p>"Register smart. Start faster. Grow with confidence."</p>
+                <span>Let's build your business today!</span>
+            </div>
+        </div>
     </div>
 </div>

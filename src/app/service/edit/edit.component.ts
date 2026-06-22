@@ -24,6 +24,7 @@ export class EditComponent  implements OnChanges{
   form = new FormGroup({
     id : new FormControl('',[Validators.required]),
     sName: new FormControl('',[Validators.required]),
+    price: new FormControl('',[Validators.required, Validators.min(0)]),
     webShow : new FormControl('',[Validators.required])
   });
 
@@ -32,6 +33,7 @@ export class EditComponent  implements OnChanges{
       // alert(JSON.stringify(this.data));
       this.form.get('id')?.setValue(this.data?.servicesTblId);
       this.form.get('sName')?.setValue(this.data?.servicesName);
+      this.form.get('price')?.setValue(this.data?.price ?? '0');
       this.form.get('webShow')?.setValue(this.data?.webShow);
     }
   }

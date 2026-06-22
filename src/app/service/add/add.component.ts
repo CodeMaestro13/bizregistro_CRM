@@ -23,6 +23,7 @@ export class AddComponent {
   constructor(private api:AdminsService){}
   form = new FormGroup({
     sName: new FormControl('',[Validators.required]),
+    price: new FormControl('',[Validators.required, Validators.min(0)]),
     webShow : new FormControl('',[Validators.required])
   });
 

@@ -1,4 +1,6 @@
 const baseUrl = 'https://apis.bizregistro.com/'; // Base URL for the API
+// localhost url 
+// const baseUrl= 'http://localhost/bizBackend/'; // Base URL for the API in development
 export const endpoints = {
     auth: `${baseUrl}Authorization/`,
     leads: `${baseUrl}Leads/`,
@@ -12,6 +14,8 @@ export const endpoints = {
     Services: `${baseUrl}Services/`,
     Dashboard: `${baseUrl}Dashboard/`,
     Workprogress: `${baseUrl}Workprogress/`,
-    work_status: `${baseUrl}Workstatus/`
+    work_status: `${baseUrl}Workstatus/`,
+    quotation: `${baseUrl}Quotation/`,
+    quotationLegacy: `${baseUrl}index.php/Quotation/`
     // Other endpoints can be added here as needed  
 };

@@ -1,7 +1,8 @@
 import { data } from './themecomponent/dashboard/crypto/market-graph/series-data';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { tap } from 'rxjs';
+import { catchError, tap } from 'rxjs';
+import { throwError } from 'rxjs';
 import { endpoints } from './shared/endpoints';
 @Injectable({
   providedIn: 'root'
@@ -194,6 +195,24 @@ export class AdminsService {
       return this.http.post(`${endpoints.leads}addQuotation`,data).pipe(tap(res => console.log(res)));
     }
 
+    createQuotation(data:any){
+      return this.http.post(`${endpoints.quotation}create`, data).pipe(
+        tap(res => console.log(res)),
+        catchError((error) => {
+          return this.http.post(`${endpoints.quotationLegacy}create`, data).pipe(
+            tap(res => console.log(res)),
+            catchError((legacyError) => throwError(() => legacyError || error))
+          );
+        })
+      );
+    }
+
+    getLeadQuotations(leadId:any){
+      return this.http.get(`${endpoints.quotation}get?lead_id=${encodeURIComponent(leadId)}`).pipe(tap(res => console.log(res)));
+    }
+
+    viewQuotation(id:any){
+      return this.http.get(`${endpoints.quotation}view?id=${encodeURIComponent(id)}`).pipe(tap(res => console.log(res)));
+    }
 
 }
-

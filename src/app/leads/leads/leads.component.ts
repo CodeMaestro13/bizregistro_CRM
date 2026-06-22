@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDatepickerModule, MatDateRangeInput } from '@angular/material/datepicker';
 import { CommonModule } from '@angular/common';
-import { debounceTime, distinctUntilChanged, filter, fromEvent, interval, map, Observable, of, pluck, Subscription, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, forkJoin, fromEvent, interval, map, Observable, of, pluck, Subscription, switchMap, tap } from 'rxjs';
 import Swal from 'sweetalert2';
 import { CdkTableModule } from "@angular/cdk/table";
 import { CustomizerSettingsService } from '../../themecomponent/customizer-settings/customizer-settings.service';
@@ -103,8 +103,14 @@ export class LeadsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.api.status().pipe(pluck('data')).subscribe((res:any) => {
       this.statusList = res;
     });
-    this.api.services().pipe(pluck('data')).subscribe((res:any) => {
-      this.services = res;
+    forkJoin({
+      list: this.api.services().pipe(catchError(() => of(null))),
+      catalog: this.api.getServices().pipe(catchError(() => of(null)))
+    }).subscribe((res:any) => {
+      this.services = this.mergeServicePriceLists(
+        this.normalizeListResponse(res?.list),
+        this.normalizeListResponse(res?.catalog)
+      );
     });
     this.autoRefreshSub = interval(60000).subscribe(() => {
       this.getLeads();
@@ -323,6 +329,90 @@ export class LeadsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   serviceArray(element: any) {
     return element ? element.split(',') : [];
+  }
+
+  private normalizeListResponse(response: any): any[] {
+    const source = response?.data || response;
+    return Array.isArray(source) ? source : [];
+  }
+
+  private mergeServicePriceLists(listServices: any[], catalogServices: any[]): any[] {
+    const catalogByKey = new Map<string, any>();
+
+    catalogServices.forEach((service: any) => {
+      this.getServiceKeys(service).forEach((key) => catalogByKey.set(key, service));
+    });
+
+    const merged = listServices.map((service: any) => {
+      const catalogService = this.getServiceKeys(service)
+        .map((key) => catalogByKey.get(key))
+        .find(Boolean);
+
+      return this.normalizeQuotationService({
+        ...(catalogService || {}),
+        ...service,
+        price: this.getServicePrice(service, catalogService)
+      });
+    });
+
+    if (merged.length) {
+      return merged;
+    }
+
+    return catalogServices.map((service: any) => this.normalizeQuotationService(service));
+  }
+
+  private normalizeQuotationService(service: any) {
+    const serviceName = service?.sName || service?.servicesName || service?.name || service?.serviceName || '';
+    const serviceId = service?.sId || service?.servicesTblId || service?.id || service?.serviceId || '';
+
+    return {
+      ...service,
+      sId: serviceId,
+      servicesTblId: service?.servicesTblId || serviceId,
+      sName: serviceName,
+      servicesName: service?.servicesName || serviceName,
+      price: this.getServicePrice(service)
+    };
+  }
+
+  private getServiceKeys(service: any): string[] {
+    return [
+      service?.sId,
+      service?.servicesTblId,
+      service?.id,
+      service?.serviceId,
+      service?.sName,
+      service?.servicesName,
+      service?.name,
+      service?.serviceName
+    ]
+      .map((value) => String(value ?? '').trim().toLowerCase())
+      .filter(Boolean);
+  }
+
+  private getServicePrice(primary: any, fallback?: any): number {
+    const rawPrice =
+      primary?.price ??
+      primary?.sPrice ??
+      primary?.servicePrice ??
+      primary?.servicesPrice ??
+      primary?.default_price ??
+      primary?.quotation_price ??
+      primary?.rate ??
+      primary?.amount ??
+      fallback?.price ??
+      fallback?.sPrice ??
+      fallback?.servicePrice ??
+      fallback?.servicesPrice ??
+      fallback?.default_price ??
+      fallback?.quotation_price ??
+      fallback?.rate ??
+      fallback?.amount ??
+      0;
+
+    const price = Number(rawPrice);
+    return Number.isFinite(price) ? price : 0;
   }
 
   addCallAct(item: any) {

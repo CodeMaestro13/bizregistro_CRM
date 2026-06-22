@@ -18,7 +18,7 @@
                             <mat-label>Select Service</mat-label>
                             <mat-select multiple formControlName="services">
                                 <mat-option *ngFor="let service of services" [value]="service">
-                                    {{ service.sName }}
+                                    {{ service.sName || service.servicesName || service.name }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
@@ -109,8 +109,8 @@
                             <!-- Actions -->
                     <div class="form-actions col-12 mb-2 d-flex gap-2 flex-wrap">
                         <button type="button" class="btn-save" (click)="savePdf()" [disabled]="isGeneratingPdf">
-                            <span *ngIf="!isGeneratingPdf"> Save PDF </span>
-                            <span *ngIf="isGeneratingPdf"> Generating PDF... </span>
+                            <span *ngIf="!isGeneratingPdf"> Save & Generate PDF </span>
+                            <span *ngIf="isGeneratingPdf"> Saving & Generating... </span>
                         </button>
                         <!-- <button type="button" class="btn-save" (click)="sendWhatsApp()">
                             Send Quotation via WhatsApp

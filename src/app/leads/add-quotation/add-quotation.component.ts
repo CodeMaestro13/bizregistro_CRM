@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AdminsService } from '../../admins.service';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { CommonModule } from '@angular/common';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-add-quotation',
@@ -16,7 +17,7 @@ import html2canvas from 'html2canvas';
   templateUrl: './add-quotation.component.html',
   styleUrl: './add-quotation.component.scss'
 })
-export class AddQuotationComponent {
+export class AddQuotationComponent implements OnInit, OnChanges {
   @Input() data:any;
   @Input() services:any[]=[];
   @Output() closep= new EventEmitter<any>();
@@ -44,17 +45,18 @@ ngOnInit(): void {
 
   // detect selected services
   this.quotationForm.get('services')?.valueChanges.subscribe(res => {
-
-    this.selectedServices = res.map((service: any) => ({
-      ...service,
-      price: this.priceMap[service.sName] || '',
-      qty: 1,
-      discount: 0
-    }));
-    this.quotationServicePages = this.paginateQuotationServices(this.selectedServices);
+    this.updateSelectedServices(res || []);
 
   });
 
+  this.prefillLeadServices();
+
+}
+
+ngOnChanges(changes: SimpleChanges): void {
+  if ((changes['data'] || changes['services']) && this.quotationForm) {
+    this.prefillLeadServices();
+  }
 }
 
 onClose(closed:any = false) {
@@ -64,7 +66,7 @@ onClose(closed:any = false) {
 
 submitQuotation() {
   const payload = {
-    lead_id: this.data.id,
+    lead_id: this.data?.id || this.data?.shopacttblID || this.data?.lead_id,
     services: this.selectedServices,
     notes: this.quotationForm.value.notes
   };
@@ -216,6 +218,139 @@ getScopeOfWork(serviceName:string): string[] {
   return this.scopeOfWorkMap[serviceName] || ['Scope of work details not available'];
 }
 
+private updateSelectedServices(services: any[]) {
+  this.selectedServices = services.map((service: any) => {
+    const serviceName = this.getServiceDisplayName(service);
+
+    return {
+      ...service,
+      sName: serviceName,
+      servicesName: service?.servicesName || serviceName,
+      price: this.getServiceDefaultPrice(service),
+      qty: service?.qty || 1,
+      discount: service?.discount || 0
+    };
+  });
+  this.quotationServicePages = this.paginateQuotationServices(this.selectedServices);
+}
+
+private getServiceDisplayName(service: any): string {
+  return service?.sName || service?.servicesName || service?.name || service?.serviceName || service?.description || '';
+}
+
+private getServiceDefaultPrice(service: any): number {
+  const rawPrice =
+    service?.price ??
+    service?.sPrice ??
+    service?.servicePrice ??
+    service?.servicesPrice ??
+    service?.default_price ??
+    service?.quotation_price ??
+    service?.rate ??
+    service?.amount ??
+    0;
+
+  const price = Number(rawPrice);
+  return Number.isFinite(price) ? price : 0;
+}
+
+private prefillLeadServices() {
+  const selectedValues = this.getLeadServiceValues();
+
+  if (!selectedValues.length || !this.services?.length) {
+    return;
+  }
+
+  const selectedServiceObjects = this.services.filter((service: any) =>
+    selectedValues.some((value) => this.isSameService(service, value))
+  );
+
+  if (!selectedServiceObjects.length) {
+    return;
+  }
+
+  this.quotationForm.get('services')?.setValue(selectedServiceObjects, { emitEvent: false });
+  this.updateSelectedServices(selectedServiceObjects);
+}
+
+private getLeadServiceValues(): string[] {
+  return [
+    ...this.normalizeServiceValue(this.data?.lservices),
+    ...this.normalizeServiceValue(this.data?.services),
+    ...this.normalizeServiceValue(this.data?.service),
+    ...this.normalizeServiceValue(this.data?.service_ids),
+    ...this.normalizeServiceValue(this.data?.service_id),
+    ...this.normalizeServiceValue(this.data?.serviceIds),
+    ...this.normalizeServiceValue(this.data?.servicesName),
+    ...this.normalizeServiceValue(this.data?.serviceName),
+    ...this.normalizeServiceValue(this.data?.selected_services),
+    ...this.normalizeServiceValue(this.data?.selectedServices)
+  ];
+}
+
+private normalizeServiceValue(value: any): string[] {
+  if (value === null || value === undefined) {
+    return [];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => this.normalizeServiceValue(item));
+  }
+
+  if (typeof value === 'object') {
+    return this.normalizeServiceValue(
+      value?.sName ||
+      value?.servicesName ||
+      value?.name ||
+      value?.serviceName ||
+      value?.service ||
+      value?.sId ||
+      value?.id ||
+      value?.serviceId ||
+      value?.servicesTblId
+    );
+  }
+
+  const stringValue = String(value).trim();
+
+  if (!stringValue || stringValue === '[]' || stringValue.toLowerCase() === 'null') {
+    return [];
+  }
+
+  if (stringValue.startsWith('[') && stringValue.endsWith(']')) {
+    try {
+      return this.normalizeServiceValue(JSON.parse(stringValue));
+    } catch {
+      return stringValue
+        .replace(/^\[|\]$/g, '')
+        .split(',')
+        .map((item: string) => item.replace(/^['"]|['"]$/g, '').trim())
+        .filter(Boolean);
+    }
+  }
+
+  return stringValue.split(',').map((item: string) => item.trim()).filter(Boolean);
+}
+
+private isSameService(service: any, value: string): boolean {
+  const normalizedValue = this.normalizeComparable(value);
+  const serviceValues = [
+    service?.sId,
+    service?.id,
+    service?.servicesTblId,
+    service?.serviceId,
+    service?.sName,
+    service?.servicesName,
+    service?.name
+  ];
+
+  return serviceValues.some((serviceValue) => this.normalizeComparable(serviceValue) === normalizedValue);
+}
+
+private normalizeComparable(value: any): string {
+  return String(value ?? '').trim().toLowerCase();
+}
+
 private paginateQuotationServices(services: any[]): any[][] {
   if (!services.length) {
     return [[]];
@@ -265,27 +400,12 @@ getServiceNumber(pageIndex: number, itemIndex: number): number {
     .reduce((total, page) => total + page.length, 0) + itemIndex + 1;
 }
 
-// OBJECT FOR PRICE SELECTION BASED ON THE SERVICE SELECTED
-priceMap: any = {
-  'Udyam Aadhar': 999,
-  'Shop Act': 999,
-  'Food License': 3499,
-  'State Food License': 9999,
-  'Central Food License': 19999,
-  'GST Registration': 1999,
-  'GST Return': 999,
-  'ITR Return': 1999,
-  'ISO Certificate': 5999,
-  'Import or Export Code Services': 3999,
-  'Startup India Registration': 9999,
-  'Proprietorship': 1499,
-  'Trademark Registration': 13500,
-  'Partnership Firm': 9999,
-  'Limited Liability Partnership': 19999,
-  'Private Limited Company': 19999
-};
-
 async savePdf() {
+  if (!this.selectedServices.length) {
+    alert('Please select at least one service');
+    return;
+  }
+
   const data = document.getElementById('quotationPdf');
 
   if (!data) {
@@ -304,11 +424,13 @@ async savePdf() {
   this.isGeneratingPdf = true;
   data.classList.add('pdf-rendering');
 
+  let pdf: jsPDF;
+
   try {
     await new Promise(resolve => setTimeout(resolve, 50));
     await this.waitForPdfAssets(data);
 
-    const pdf = new jsPDF('p', 'mm', 'a4');
+    pdf = new jsPDF('p', 'mm', 'a4');
     const pageWidth = 210;
     const pageHeight = 297;
 
@@ -334,14 +456,112 @@ async savePdf() {
       const imgData = canvas.toDataURL('image/jpeg', 1.0);
       pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
     }
-
-    pdf.save(`quotation-${this.data?.name || 'lead'}.pdf`);
   } catch (error) {
     console.error('PDF generation failed', error);
     alert('PDF generation failed. See console for details.');
+    this.isGeneratingPdf = false;
+    data.classList.remove('pdf-rendering');
+    return;
+  }
+
+  pdf.save(`quotation-${this.data?.name || 'lead'}.pdf`);
+
+  try {
+    await this.saveQuotationToBackend();
+    this.closep.emit({ saved: true, refresh: true });
+  } catch (error) {
+    console.error('Quotation PDF was generated, but backend save failed', error);
+    alert(`PDF generated, but quotation was not saved in backend. ${this.getSaveErrorMessage(error)}`);
   } finally {
     this.isGeneratingPdf = false;
     data.classList.remove('pdf-rendering');
+  }
+}
+
+private async saveQuotationToBackend() {
+  const response: any = await firstValueFrom(this.api.createQuotation(this.buildQuotationPayload()));
+
+  if (response?.status && response.status !== 'success') {
+    throw new Error(response?.msg || response?.message || 'Quotation save failed');
+  }
+
+  return response;
+}
+
+private getSaveErrorMessage(error: any) {
+  if (error?.status === 0) {
+    return 'The request was blocked or the backend is unreachable. Check CORS/OPTIONS for Quotation/create.';
+  }
+
+  return error?.error?.msg || error?.error?.message || error?.message || 'Please check Quotation/create backend response.';
+}
+
+private buildQuotationPayload() {
+  const quotationDate = this.formatDateForApi(this.today);
+  const validUntil = new Date(this.today);
+  validUntil.setDate(validUntil.getDate() + 10);
+  const quotationServices = this.buildQuotationServicesPayload();
+
+  return {
+    lead_id: this.data?.id || this.data?.shopacttblID || this.data?.lead_id,
+    created_by: this.getCurrentAdminId(),
+    quotation_date: quotationDate,
+    valid_until: this.formatDateForApi(validUntil),
+    subtotal: this.getSubTotal(),
+    discount_amount: this.getDiscountTotal(),
+    tax_amount: '0.00',
+    total_amount: this.getGrandTotal(),
+    notes: this.quotationForm.value.notes || '',
+    status: 'sent',
+    billing: {
+      company_name: this.quotationForm.value.companyName || this.data?.name || '',
+      mobile: this.quotationForm.value.billingMobile || this.data?.mobile || '',
+      email: this.quotationForm.value.billingEmail || this.data?.email || '',
+      address: this.quotationForm.value.addressClient || this.data?.address || ''
+    },
+    services: quotationServices,
+    items: quotationServices
+  };
+}
+
+private buildQuotationServicesPayload() {
+  return this.selectedServices.map((item: any) => {
+    const qty = Number(item.qty || 1);
+    const unitPrice = Number(item.price || 0);
+    const discount = Number(item.discount || 0);
+    const lineTotal = (unitPrice * qty) - discount;
+
+    return {
+      service_id: item?.sId || item?.id || item?.serviceId || item?.servicesTblId || '',
+      description: item?.sName || item?.servicesName || item?.name || '',
+      service_name: item?.sName || item?.servicesName || item?.name || '',
+      sName: item?.sName || item?.servicesName || item?.name || '',
+      qty: qty.toFixed(2),
+      quantity: qty.toFixed(2),
+      unit_price: unitPrice.toFixed(2),
+      price: unitPrice.toFixed(2),
+      discount: discount.toFixed(2),
+      tax_rate: '0.00',
+      tax_amount: '0.00',
+      line_total: lineTotal.toFixed(2),
+      total: lineTotal.toFixed(2)
+    };
+  });
+}
+
+private formatDateForApi(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+private getCurrentAdminId() {
+  try {
+    const user = JSON.parse(localStorage.getItem('biz-user') || '{}');
+    return user?.aId || user?.id || user?.admin_id || '';
+  } catch {
+    return '';
   }
 }
 
