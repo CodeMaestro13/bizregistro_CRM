@@ -163,7 +163,7 @@
             
             <button
             mat-raised-button
-            (click)="leadfilter.get('status')?.setValue(status.id); pagination('first');"
+            (click)="selectStatus(status.id)"
             style="width: fit-content !important; margin: 10px; padding: 10px !important; font-weight: 600 !important;"
             [ngStyle]="{
                 'background-color': leadfilter.get('status')?.value == status.id 
@@ -253,6 +253,21 @@
                                             <!-- {{ item| json }} -->
                                         </span>
                                         {{ item.last_activity }} <br />
+                                        <div *ngIf="isRepeatedLead(item)" class="repeated-lead-badge mt-2">
+                                            <i class="ri-error-warning-line"></i> Repeated Lead
+                                            <span *ngIf="item?.duplicate_count">({{ item.duplicate_count }})</span>
+                                        </div>
+                                        <div *ngIf="isQuotationSent(item)" class="quotation-sent-meta mt-2">
+                                            <span class="quotation-sent-badge">
+                                                <i class="ri-file-list-3-line"></i> Quotation Sent
+                                            </span>
+                                            <span *ngIf="item?.quotation_count" class="quotation-sent-detail">
+                                                Count: {{ item.quotation_count }}
+                                            </span>
+                                            <span *ngIf="item?.latest_quotation_date" class="quotation-sent-detail">
+                                                Latest: {{ item.latest_quotation_date | date:'dd MMM yyyy' }}
+                                            </span>
+                                        </div>
                                         <div class="d-flex align-items-center justify-content-end mt-2">
                                             <button mat-mini-fab  (click)="$event.stopPropagation(); whatsapp(item)"
                                                 style="background-color: green;margin-right:10px;border-radius: 10px;">
@@ -275,9 +290,6 @@
                                                 style="border-radius: 10px; margin-left:10px;">
                                                 <i class="flaticon-plus"></i>
                                             </button>
-                                        </div>
-                                        <div *ngIf="item.isRepeatedLead" class="alert alert-warning mt-2">
-                                            <i class="ri-error-warning-line"></i>repeated lead.
                                         </div>
                                     </td>
                                 </tr>

@@ -6,10 +6,10 @@ export class LoaderService {
   loading = new BehaviorSubject<boolean>(false);
 
   show() {
-    this.loading.next(true);
+    queueMicrotask(() => this.loading.next(true));
   }
   
   hide() {
-    this.loading.next(false);
+    queueMicrotask(() => this.loading.next(false));
   }
 }

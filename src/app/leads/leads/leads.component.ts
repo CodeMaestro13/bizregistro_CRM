@@ -501,6 +501,12 @@ export class LeadsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.leadfilter.get('page')?.setValue(this.pageNo);
     this.getLeads();
   }
+
+  selectStatus(statusId: any) {
+    this.leadfilter.get('status')?.setValue(statusId);
+    this.pagination('first');
+  }
+
   addNewLead:any = false;
   openAddNewLead(){
     // alert('open New Lead Modal')
@@ -525,6 +531,12 @@ export class LeadsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   getStatusColor(statusName: string): string {
     switch (statusName?.toLowerCase()) {
+      case 'quotation sent':
+        return '#0f766e';
+
+      case 'repeated leads':
+        return '#dc3545';
+
       case 'highly interested':
         return '#006400'; // Dark Green
 
@@ -547,6 +559,15 @@ export class LeadsComponent implements OnInit, AfterViewInit, OnDestroy {
         return '#347ab7'; // Default Blue
     }
   }  
+
+  isQuotationSent(item: any): boolean {
+    return item?.quotation_sent === true || item?.quotation_sent === 'true' || item?.quotation_sent === 1 || item?.quotation_sent === '1';
+  }
+
+  isRepeatedLead(item: any): boolean {
+    return item?.repeated_lead === true || item?.repeated_lead === 'true' || item?.repeated_lead === 1 || item?.repeated_lead === '1';
+  }
+
   whatsapp(item:any){
     const mobile = item?.mobile;
     const formattedMobile = mobile.replace(/\D/g, '');

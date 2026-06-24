@@ -1,6 +1,6 @@
-const baseUrl = 'https://apis.bizregistro.com/'; // Base URL for the API
+// const baseUrl = 'https://apis.bizregistro.com/'; // Base URL for the API
 // localhost url 
-// const baseUrl= 'http://localhost/bizBackend/'; // Base URL for the API in development
+const baseUrl= 'http://localhost/bizBackend/'; // Base URL for the API in development
 export const endpoints = {
     auth: `${baseUrl}Authorization/`,
     leads: `${baseUrl}Leads/`,
